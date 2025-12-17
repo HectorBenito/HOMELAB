@@ -14,7 +14,7 @@ talos_control_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D1"
-        tag     = 70
+        tag     = 
       }
     ]
   },
@@ -29,7 +29,7 @@ talos_control_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D2"
-        tag     = 70
+        tag     = 
       }
     ]
   },
@@ -44,7 +44,7 @@ talos_control_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D3"
-        tag     = 70
+        tag     = 
       }
     ]
   }

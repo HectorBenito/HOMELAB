@@ -8,6 +8,8 @@ terraform {
 }
 
 provider "proxmox" {
+  pm_tls_insecure = true
+  pm_minimum_permission_check = false
   pm_api_url = var.pm_api_url
   pm_user = var.pm_username
   pm_api_token_id = var.pm_api_token_id
