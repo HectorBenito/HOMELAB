@@ -6,17 +6,21 @@ on:
       - main
 
 jobs:
-  deploy:
+  connect:
     environment: production
     runs-on: ubuntu-latest
+    env:
+      tf_working_directory: terraform
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        
       - name: Install OpenVPN
         run: |
           sudo apt update
           sudo apt install -y openvpn openvpn-systemd-resolved
+
       - name: Connect to VPN
         uses: "kota65535/github-openvpn-connect-action@v2"
         with:
@@ -24,3 +28,18 @@ jobs:
           username: ${{ secrets.OVPN_USERNAME }}
           password: ${{ secrets.OVPN_PASSWORD }}
           client_key: ${{ secrets.OVPN_USER_KEY }}
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      - name: Terraform init
+        run: terraform init
+        working-directory: ${{ env.tf_working_directory }}
+
+      - name: Deploy with Terraform
+        run: |
+          terraform plan -var-file=values.tf -out=create-plan 
+          terraform apply create-plan
+
