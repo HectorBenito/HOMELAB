@@ -1,0 +1,32 @@
+name: Test HomeLab Health
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    environment: production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install OpenVPN
+        run: |
+          sudo apt update
+          sudo apt install -y openvpn openvpn-systemd-resolved
+      - name: Connect to VPN
+        uses: "kota65535/github-openvpn-connect-action@v2"
+        with:
+          config_file: .github/workflows/client.ovpn
+          username: ${{ secrets.OVPN_USERNAME }}
+          password: ${{ secrets.OVPN_PASSWORD }}
+          client_key: ${{ secrets.OVPN_USER_KEY }}
+      - name: Ping HomeLab 
+        run: |
+          ping -c 4 192.168.110.11
+          ping -c 4 192.168.110.12
+          ping -c 4 192.168.110.13
+          ping -c 4 192.168.100.11
