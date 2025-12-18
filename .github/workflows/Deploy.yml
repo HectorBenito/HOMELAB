@@ -22,24 +22,51 @@ jobs:
           sudo apt install -y openvpn openvpn-systemd-resolved
 
       - name: Connect to VPN
-        uses: "kota65535/github-openvpn-connect-action@v2"
+        uses: kota65535/github-openvpn-connect-action@v2
         with:
           config_file: .github/workflows/client.ovpn
           username: ${{ secrets.OVPN_USERNAME }}
           password: ${{ secrets.OVPN_PASSWORD }}
           client_key: ${{ secrets.OVPN_USER_KEY }}
 
-      - name: Install Terraform
-        uses: hashicorp/setup-terraform@v2
+      - name: terraform plan
+        uses: dflook/terraform-plan@v2
         with:
-          terraform_version: 1.5.7
+          path: terraform
+          auto_approve: true
+
+
+
+
+
+      - name: Set up OpenTofu
+        run: |
+          curl -sSL https://github.com/opentofu/opentofu/releases/download/v1.8.5/tofu_1.8.5_linux_amd64.tar.gz -o /tmp/tofu.tar.gz
+          tar -xzf /tmp/tofu.tar.gz -C /tmp
+          mv /tmp/tofu /usr/local/bin/tofu
+          chmod +x /usr/local/bin/tofu
+          tofu --version  # Verify the installation
+
+      - name: OpenTofu init
+        run: |
+          tofu init
+
+      - name: Deploy VMs with OpenTofu
+        working-directory: ${{ env.tf_working_directory }}
+        run: |
+          tofu plan -var-file=values.tf -out=create-plan
+          tofu apply create-plan
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
           terraform_wrapper: false
 
       - name: Terraform init
         run: terraform init
         working-directory: ${{ env.tf_working_directory }}
 
-      - name: Deploy with Terraform
+      - name: Deploy VMs with Terraform
         working-directory: ${{ env.tf_working_directory }}
         run: |
           terraform plan -var-file=values.tf -out=create-plan 
