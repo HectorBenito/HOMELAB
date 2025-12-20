@@ -34,5 +34,10 @@ jobs:
         with:
           path: terraform
           var_file: terraform/values.tfvars
+          variables: |
+            pm_api_url = "${{ secrets.PM_API_URL }}"
+            pm_username = "${{ secrets.PM_USERNAME }}"
+            pm_api_token_id = "${{ secrets.PM_API_TOKEN_ID }}"
+            pm_api_token_secret = "${{ secrets.PM_API_TOKEN_SECRET }}"
           auto_approve: true
 
