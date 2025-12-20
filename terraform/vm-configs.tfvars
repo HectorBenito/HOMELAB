@@ -14,7 +14,6 @@ talos_control_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D1"
-        tag     = 
       }
     ]
   },
@@ -29,7 +28,6 @@ talos_control_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D2"
-        tag     = 
       }
     ]
   },
@@ -44,7 +42,6 @@ talos_control_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D3"
-        tag     = 
       }
     ]
   }
@@ -64,7 +61,6 @@ talos_worker_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D4"
-        tag     = 70
       }
     ]
   },
@@ -79,7 +75,6 @@ talos_worker_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D5"
-        tag     = 70
       }
     ]
   },
@@ -94,7 +89,6 @@ talos_worker_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D6"
-        tag     = 70
       }
     ]
   }
