@@ -9,7 +9,9 @@ talos_control_configuration = [
     vm_name   = "talos-control-1"
     cpu_cores = 2
     memory    = 4096
+    disk_storage   = "POOL"
     disk_size = "50G"
+    longhorn_disk_size = "250G"
     networks = [
       {
         id      = 0
@@ -23,7 +25,9 @@ talos_control_configuration = [
     vm_name   = "talos-control-2"
     cpu_cores = 2
     memory    = 4096
+    disk_storage   = "POOL"
     disk_size = "50G"
+    longhorn_disk_size = "250G"
     networks = [
       {
         id      = 0
@@ -37,7 +41,9 @@ talos_control_configuration = [
     vm_name   = "talos-control-3"
     cpu_cores = 2
     memory    = 4096
+    disk_storage   = "POOL"
     disk_size = "50G"
+    longhorn_disk_size = "250G"
     networks = [
       {
         id      = 0
@@ -56,7 +62,9 @@ talos_worker_configuration = [
     vm_name   = "talos-worker-1"
     cpu_cores = 6
     memory    = 8192
+    disk_storage   = "POOL"
     disk_size = "100G"
+    longhorn_disk_size = "250G"
     networks = [
       {
         id      = 0
@@ -70,7 +78,9 @@ talos_worker_configuration = [
     vm_name   = "talos-worker-2"
     cpu_cores = 6
     memory    = 8192
+    disk_storage   = "POOL"
     disk_size = "100G"
+    longhorn_disk_size = "250G"
     networks = [
       {
         id      = 0
@@ -84,7 +94,9 @@ talos_worker_configuration = [
     vm_name   = "talos-worker-3"
     cpu_cores = 12
     memory    = 8192
+    disk_storage   = "POOL"
     disk_size = "100G"
+    longhorn_disk_size = "250G"
     networks = [
       {
         id      = 0
