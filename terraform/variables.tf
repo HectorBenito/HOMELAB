@@ -43,7 +43,6 @@ variable talos_control_configuration {
         {
           id      = number
           macaddr = string
-          tag     = number
         }
       ))
     }
@@ -65,7 +64,6 @@ variable talos_worker_configuration {
         {
           id      = number
           macaddr = string
-          tag     = number
         }
       ))
     }
