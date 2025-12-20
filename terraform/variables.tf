@@ -38,7 +38,7 @@ variable talos_control_configuration {
       vm_name   = string
       cpu_cores = number
       memory    = number
-      storage   = string
+      disk_storage   = string
       disk_size = string
       longhorn_disk_size = string
       networks = list(object(
@@ -61,7 +61,7 @@ variable talos_worker_configuration {
       vm_name   = string
       cpu_cores = number
       memory    = number
-      storage   = string
+      disk_storage   = string
       disk_size = string
       longhorn_disk_size = string
       networks = list(object(
