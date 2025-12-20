@@ -33,7 +33,7 @@ jobs:
         uses: dflook/terraform-apply@v2
         with:
           path: terraform
-          var_file: terraform/values.tfvars
+          var_file: terraform/vm-configs.tfvars
           variables: |
             pm_api_url = "${{ secrets.PM_API_URL }}"
             pm_username = "${{ secrets.PM_USERNAME }}"
