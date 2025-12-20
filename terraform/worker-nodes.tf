@@ -47,8 +47,6 @@ resource "proxmox_vm_qemu" "talos_stateless_worker" {
           size    = each.value.disk_size
         }
       }
-    }
-        scsi {
       scsi1 {
         disk {
           storage = each.value.disk_storage
