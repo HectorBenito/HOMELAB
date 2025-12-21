@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  connect:
+  Deploy:
     environment: production
     runs-on: ubuntu-latest
     env:
@@ -72,3 +72,8 @@ jobs:
 
       - name: Setup Helm
         uses: azure/setup-helm@v4.3.0
+
+      - name: Run Ansible Playbook
+        run: |
+          ansible-playbook -i inventory.yml ${{ env.ANSIBLE_DIR }}/playbooks/layer2-configure.yml
+    

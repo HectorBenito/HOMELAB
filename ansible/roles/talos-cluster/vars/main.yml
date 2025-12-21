@@ -1,7 +1,7 @@
 # Talos Cluster Configuration Variables
 
 # Cluster configuration
-cluster_name: "NASBENITO"
+cluster_name: "nasbenito"
 cluster_endpoint: "https://192.168.110.18:6443"  # Control plane IP
 
 # Default install disk (used if not specified per node)
@@ -49,7 +49,7 @@ proxmox_node_2: "pve2"
 proxmox_node_3: "pve3"  
 
 # Talos configuration directory (relative to repo root)
-talos_config_dir: "talosconfig"
+talos_config_dir: "{{ playbook_dir }}/../../talos-{{ cluster_name }}"
 
 # CNI to use (none = we'll install Cilium manually)
 cni_name: "none"

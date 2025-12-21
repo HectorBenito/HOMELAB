@@ -1,0 +1,236 @@
+---
+# Generate Talos configuration
+
+- name: Create Talos configuration directory
+  ansible.builtin.file:
+    path: "{{ talos_config_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Check if secrets.yaml already exists
+  ansible.builtin.stat:
+    path: "{{ talos_config_dir }}/secrets.yaml"
+  register: secrets_file
+
+- name: Display secrets status
+  ansible.builtin.debug:
+    msg: "{{ '✓ Using existing secrets.yaml' if secrets_file.stat.exists else '⚙️  Generating new secrets.yaml' }}"
+
+- name: Generate Talos secrets
+  ansible.builtin.command:
+    cmd: talosctl gen secrets
+    chdir: "{{ talos_config_dir }}"
+  when: not secrets_file.stat.exists
+  changed_when: true
+
+- name: Create CNI configuration patch
+  ansible.builtin.copy:
+    content: |
+      cluster:
+        network:
+          cni:
+            name: {{ cni_name }}
+    dest: "{{ talos_config_dir }}/cni.yaml"
+    mode: '0644'
+
+- name: Create control plane scheduling patch
+  ansible.builtin.copy:
+    content: |
+      cluster:
+        allowSchedulingOnControlPlanes: {{ allow_scheduling_on_control_planes | lower }}
+    dest: "{{ talos_config_dir }}/allowcontrolplanes.yaml"
+    mode: '0644'
+
+- name: Create installer image version patch
+  ansible.builtin.copy:
+    content: |
+      machine:
+        install:
+          image: ghcr.io/siderolabs/installer:v{{ talos_version }}
+    dest: "{{ talos_config_dir }}/installer-version.yaml"
+    mode: '0644'
+
+- name: Create kubelet certificate rotation patch
+  ansible.builtin.copy:
+    content: |
+      machine:
+        kubelet:
+          extraArgs:
+            rotate-server-certificates: "true"
+    dest: "{{ talos_config_dir }}/kubelet-certs.yaml"
+    mode: '0644'
+
+- name: Create kubelet cert approver patch
+  ansible.builtin.copy:
+    content: |
+      cluster:
+        extraManifests:
+          - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
+    dest: "{{ talos_config_dir }}/kubelet-cert-approver.yaml"
+    mode: '0644'
+
+- name: Create system extensions factory image patch
+  ansible.builtin.copy:
+    content: |
+      # System extensions using Talos Image Factory
+      # Extensions: qemu-guest-agent, iscsi-tools, util-linux-tools for Longhorn
+      machine:
+        install:
+          image: factory.talos.dev/installer/613e1592b2da41ae5e265e8789429f22e121aab91cb4deb6bc3c0b6262961245:v{{ talos_version }}
+    dest: "{{ talos_config_dir }}/system-extensions.yaml"
+    mode: '0644'
+
+- name: Create machine features and Longhorn support patch
+  ansible.builtin.copy:
+    content: |
+      # Machine features and Longhorn support (Talos v1.10+)
+      # For Talos v1.10+, use /var/mnt/longhorn instead of /var/lib/longhorn
+      machine:
+        features:
+          # KubePrism: Local load balancer for Kubernetes API server
+          # Provides HA and automatic failover for API access
+          kubePrism:
+            enabled: true
+            port: 7445
+        kubelet:
+          extraMounts:
+            - destination: /var/mnt/longhorn
+              type: bind
+              source: /var/mnt/longhorn
+              options:
+                - bind
+                - rshared
+                - rw
+    dest: "{{ talos_config_dir }}/machine-features.yaml"
+    mode: '0644'
+
+- name: Create control plane machine patches (hostname + install disk + longhorn disk)
+  ansible.builtin.copy:
+    content: |
+      machine:
+        network:
+          hostname: {{ item.hostname }}
+        install:
+          disk: {{ item.install_disk | default(default_install_disk) }}
+      {% if item.longhorn_disk is defined %}
+        disks:
+          - device: {{ item.longhorn_disk }}
+            partitions:
+              - mountpoint: /var/mnt/longhorn
+      {% endif %}
+    dest: "{{ talos_config_dir }}/{{ item.hostname }}-machine.yaml"
+    mode: '0644'
+  loop: "{{ talos_nodes.control_planes }}"
+
+- name: Create VM worker machine patches (hostname + install disk + longhorn disk)
+  ansible.builtin.copy:
+    content: |
+      machine:
+        network:
+          hostname: {{ item.hostname }}
+        install:
+          disk: {{ item.install_disk | default(default_install_disk) }}
+      {% if item.longhorn_disk is defined %}
+        disks:
+          - device: {{ item.longhorn_disk }}
+            partitions:
+              - mountpoint: /var/mnt/longhorn
+      {% endif %}
+    dest: "{{ talos_config_dir }}/{{ item.hostname }}-machine.yaml"
+    mode: '0644'
+  loop: "{{ talos_nodes.workers }}"
+
+- name: Check which control plane configs exist
+  ansible.builtin.stat:
+    path: "{{ talos_config_dir }}/rendered/{{ item.hostname }}.yaml"
+  loop: "{{ talos_nodes.control_planes }}"
+  register: control_plane_configs_exist
+
+- name: Generate Talos configuration for control planes (only missing ones)
+  ansible.builtin.command:
+    cmd: >
+      talosctl gen config {{ cluster_name }} {{ cluster_endpoint }}
+      --with-secrets secrets.yaml
+      --talos-version v{{ talos_version }}
+      --kubernetes-version v{{ kubernetes_version }}
+      --config-patch @cni.yaml
+      --config-patch @allowcontrolplanes.yaml
+      --config-patch @kubelet-certs.yaml
+      --config-patch @kubelet-cert-approver.yaml
+      --config-patch @system-extensions.yaml
+      --config-patch @machine-features.yaml
+      --config-patch-control-plane @{{ item.item.hostname }}-machine.yaml
+      --output rendered-{{ item.item.hostname }}
+    chdir: "{{ talos_config_dir }}"
+  loop: "{{ control_plane_configs_exist.results }}"
+  when: not item.stat.exists
+  changed_when: true
+
+- name: Check which worker configs exist
+  ansible.builtin.stat:
+    path: "{{ talos_config_dir }}/rendered/{{ item.hostname }}.yaml"
+  loop: "{{ talos_nodes.workers }}"
+  register: worker_configs_exist
+
+- name: Generate Talos configuration for workers (only missing ones)
+  ansible.builtin.command:
+    cmd: >
+      talosctl gen config {{ cluster_name }} {{ cluster_endpoint }}
+      --with-secrets secrets.yaml
+      --talos-version v{{ talos_version }}
+      --kubernetes-version v{{ kubernetes_version }}
+      --config-patch @cni.yaml
+      --config-patch @allowcontrolplanes.yaml
+      --config-patch @kubelet-certs.yaml
+      --config-patch @kubelet-cert-approver.yaml
+      --config-patch @system-extensions.yaml
+      --config-patch @machine-features.yaml
+      --config-patch-worker @{{ item.item.hostname }}-machine.yaml
+      --output rendered-{{ item.item.hostname }}
+    chdir: "{{ talos_config_dir }}"
+  loop: "{{ worker_configs_exist.results }}"
+  when: not item.stat.exists
+  changed_when: true
+
+- name: Create final rendered directory
+  ansible.builtin.file:
+    path: "{{ talos_config_dir }}/rendered"
+    state: directory
+    mode: '0755'
+
+- name: Copy control planes config to rendered directory
+  ansible.builtin.copy:
+    src: "{{ talos_config_dir }}/rendered-{{ item.item.hostname }}/controlplane.yaml"
+    dest: "{{ talos_config_dir }}/rendered/{{ item.item.hostname }}.yaml"
+    mode: '0644'
+    remote_src: true
+  loop: "{{ control_plane_configs_exist.results }}"
+  when: not item.stat.exists
+
+- name: Copy worker configs to rendered directory
+  ansible.builtin.copy:
+    src: "{{ talos_config_dir }}/rendered-{{ item.item.hostname }}/worker.yaml"
+    dest: "{{ talos_config_dir }}/rendered/{{ item.item.hostname }}.yaml"
+    mode: '0644'
+    remote_src: true
+  loop: "{{ worker_configs_exist.results }}"
+  when: not item.stat.exists
+
+- name: Display all configured control planes
+  ansible.builtin.debug:
+    msg: "Control planes configured: {{ talos_nodes.control_planes | map(attribute='hostname') | list }}"
+
+- name: Display all configured workers
+  ansible.builtin.debug:
+    msg: "Workers configured: {{ talos_nodes.workers | map(attribute='hostname') | list }}"
+
+- name: Copy talosconfig to rendered directory
+  ansible.builtin.copy:
+    src: "{{ talos_config_dir }}/rendered-cp/talosconfig"
+    dest: "{{ talos_config_dir }}/rendered/talosconfig"
+    mode: '0644'
+    remote_src: true
+
+- name: Display configuration generation result
+  ansible.builtin.debug:
+    msg: "✓ Talos configuration generated in {{ talos_config_dir }}/rendered"
