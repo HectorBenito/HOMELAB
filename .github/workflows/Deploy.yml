@@ -59,7 +59,7 @@ jobs:
       - name: Setup Homebrew
         shell: bash
         run: |
-          curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+          curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | sh
 
       - name: Setup Ansible
         shell: bash
