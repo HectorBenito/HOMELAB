@@ -1,0 +1,71 @@
+---
+# Setup configuration - Talos Cluster
+
+- name: Configure Talos Kubernetes Cluster
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  tasks:
+    - name: Check prerequisites
+      ansible.builtin.include_role:
+        name: talos-cluster
+        tasks_from: prerequisites.yml
+
+    - name: Wait for Talos nodes
+      ansible.builtin.include_role:
+        name: talos-cluster
+        tasks_from: wait-for-nodes.yml
+
+    - name: Setup Talos cluster with cleanup on configuration/bootstrap failure
+      block:
+        - name: Generate Talos configuration
+          ansible.builtin.include_role:
+            name: talos-cluster
+            tasks_from: generate-config.yml
+
+        - name: Apply Talos configuration to nodes
+          ansible.builtin.include_role:
+            name: talos-cluster
+            tasks_from: apply-config.yml
+
+        - name: Bootstrap Talos cluster
+          ansible.builtin.include_role:
+            name: talos-cluster
+            tasks_from: bootstrap.yml
+
+        - name: Export kubeconfig
+          ansible.builtin.include_role:
+            name: talos-cluster
+            tasks_from: export-kubeconfig.yml
+
+        - name: Install Cilium CNI
+          ansible.builtin.include_role:
+            name: talos-cluster
+            tasks_from: install-cilium.yml
+
+        - name: Display cluster information
+          ansible.builtin.include_role:
+            name: talos-cluster
+            tasks_from: display-info.yml
+
+      rescue:
+        - name: Display failure message
+          ansible.builtin.debug:
+            msg: |
+              ⚠️  Talos configuration/bootstrap FAILED!
+              ⚠️  Initiating cleanup of all Talos VMs...
+              ⚠️  Failed task: {{ ansible_failed_task.name | default('unknown task') }}
+
+        - name: Cleanup Talos VMs on configuration/bootstrap failure
+          ansible.builtin.include_role:
+            name: talos-cluster
+            tasks_from: cleanup.yml
+
+        - name: Fail after cleanup
+          ansible.builtin.fail:
+            msg: |
+              Talos cluster setup failed during configuration/bootstrap.
+              All Talos VMs have been cleaned up.
+              Failed task: {{ ansible_failed_task.name | default('unknown') }}
+              Please check the logs above and retry.

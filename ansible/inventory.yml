@@ -1,0 +1,23 @@
+---
+# Static Ansible Inventory
+# NFS: External TrueNas server at 192.168.100.11 (not managed by Ansible)
+# Talos K8s: CP: 192.168.110.18, 192.168.110.20, 192.168.110.24, Workers: 192.168.110.19, 192.168.110.25, 192.168.110.23
+
+all:
+  children:
+    # NFS servers group is empty - using external TrueNas server
+    nfs_servers:
+      hosts: {}
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    # Network configuration
+    network_cidr: "192.168.110.0/24"
+    network_gateway: "192.168.110.1"
+    # NFS configuration (external TrueNas server - not provisioned by Ansible)
+    nfs_server_ip: "192.168.100.11"
+    nfs_export_path: "/export/nfs"
+    # Database configurations
+    postgres_db: "homelab"
+    postgres_user: "homelab"
+    redis_port: 6379

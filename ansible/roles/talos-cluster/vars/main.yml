@@ -1,0 +1,71 @@
+# Talos Cluster Configuration Variables
+
+# Cluster configuration
+cluster_name: "NASBENITO"
+cluster_endpoint: "https://192.168.110.18:6443"  # Control plane IP
+
+# Default install disk (used if not specified per node)
+default_install_disk: "/dev/sda"
+
+# Default Longhorn disk (used for storage on all nodes)
+default_longhorn_disk: "/dev/sdb"
+
+# Talos node configuration
+# - install_disk: optional, defaults to default_install_disk
+# - longhorn_disk: optional, dedicated disk for Longhorn storage (defaults to default_longhorn_disk)
+talos_nodes:
+  # VM control planes
+  control_planes:
+    - hostname: "talos-control-1"
+      ip: "192.168.110.18"
+      vmid: 1110
+      longhorn_disk: "/dev/sdb" 
+    - hostname: "talos-control-2"
+      ip: "192.168.110.20"
+      vmid: 2110
+      longhorn_disk: "/dev/sdb"
+    - hostname: "talos-control-3"
+      ip: "192.168.110.24"
+      vmid: 3110
+      longhorn_disk: "/dev/sdb"
+  # VM workers
+  workers:
+    - hostname: "talos-worker-1"
+      ip: "192.168.110.19"
+      vmid: 1111
+      longhorn_disk: "/dev/sdb" 
+    - hostname: "talos-worker-2"
+      ip: "192.168.110.25"
+      vmid: 2111
+      longhorn_disk: "/dev/sdb" 
+    - hostname: "talos-worker-3"
+      ip: "192.168.110.23"
+      vmid: 3111
+      longhorn_disk: "/dev/sdb"
+
+# Proxmox configuration
+proxmox_node_1: "pve1"  # Proxmox node name
+proxmox_node_2: "pve2"  
+proxmox_node_3: "pve3"  
+
+# Talos configuration directory (relative to repo root)
+talos_config_dir: "talosconfig"
+
+# CNI to use (none = we'll install Cilium manually)
+cni_name: "none"
+
+# Allow scheduling on control plane
+allow_scheduling_on_control_planes: true
+
+# Talos version
+talos_version: "1.11.5"
+
+# Kubernetes version (must be compatible with Talos version)
+kubernetes_version: "1.34.1"
+
+# Cilium version
+cilium_version: "1.16.5"
+
+# Wait timeouts (in seconds)
+wait_timeout_nodes: 600
+wait_timeout_cilium: 300
