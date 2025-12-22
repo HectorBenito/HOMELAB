@@ -44,12 +44,6 @@ jobs:
             pm_api_token_id = "${{ secrets.PM_API_TOKEN_ID }}"
             pm_api_token_secret = "${{ secrets.PM_API_TOKEN_SECRET }}"
           auto_approve: true
-
-      - name: Get outputs
-        uses: dflook/terraform-output@v2
-        with:
-          path: terraform
-          json_output_path: ${{ env.ANSIBLE_DIR }}/terraform-inventory.json
       
       - name: Setup Python
         uses: actions/setup-python@v4
