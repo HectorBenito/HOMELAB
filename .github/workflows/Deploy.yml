@@ -78,9 +78,9 @@ jobs:
       - name: Setup Kubectl
         uses: azure/setup-kubectl@v4
       
-      - name: Setup Kubectl
-        run: |
-          brew install kubectl
+      #- name: Setup Kubectl
+      #  run: |
+      #    brew install kubectl
 
       - name: Setup Helm
         uses: azure/setup-helm@v4.3.0
