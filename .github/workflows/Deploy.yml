@@ -55,14 +55,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      
-      #- name: Setup Homebrew
-      #  shell: bash
-      #  run: |
-      #    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      #    echo >> /home/runner/.bashrc
-      #    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/runner/.bashrc
-      #    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
       - name: Setup Ansible
         shell: bash
@@ -77,10 +69,6 @@ jobs:
 
       - name: Setup Kubectl
         uses: azure/setup-kubectl@v4
-      
-      #- name: Setup Kubectl
-      #  run: |
-      #    brew install kubectl
 
       - name: Setup Helm
         uses: azure/setup-helm@v4.3.0
