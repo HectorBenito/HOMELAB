@@ -72,5 +72,5 @@ jobs:
 
       - name: Run Ansible Playbook
         run: |
-          ansible-playbook -i inventory.yml ${{ env.ANSIBLE_DIR }}/playbooks/layer2-configure.yml
+          ansible-playbook -i inventory.yml ${{ env.ANSIBLE_DIR }}/playbooks/talos-setup.yml
     
