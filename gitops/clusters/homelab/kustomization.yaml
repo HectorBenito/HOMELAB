@@ -4,3 +4,4 @@ resources:
   - ./infra/flux-system
   - ./infra/metallb/kustomization-install.yaml
   - ./infra/metallb/kustomization-config.yaml
+  - ./infra/nfs/kustomization.yaml
