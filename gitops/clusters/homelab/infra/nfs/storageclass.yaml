@@ -13,4 +13,4 @@ parameters:
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
 mountOptions:
-  - vers=4
+  - vers=3
