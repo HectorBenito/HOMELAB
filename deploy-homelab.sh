@@ -209,8 +209,10 @@ check_prerequisites() {
     fi
 
     # Check python3
-    if ! command -c "import kubernetes; print(kubernetes.__version__)" python3  &> /dev/null; then
-        missing_tools+=("python3")
+    if ! python3 - <<'EOF' &> /dev/null; then
+import kubernetes
+print(kubernetes.__version__)
+EOF
         PYTHON_INSTALLED=false
     fi
 
@@ -330,7 +332,7 @@ layer3_gitops() {
     cd "${ANSIBLE_DIR}"
 
     log "Running Ansible GitOps deployment..."
-    if ! ansible-playbook playbooks/gitops.yml; then
+    if ! ansible-playbook playbooks/flux-bootstrap.yml; then
         log_error "Layer 3 failed - GitOps deployment unsuccessful"
         exit 1
     fi

@@ -1,0 +1,24 @@
+---
+# Kubeconfig que ya generas con Talos/Ansible
+kubeconfig_path: "{{ playbook_dir }}/../../talos-nasbenito/rendered/kubeconfig"
+
+# Flux
+flux_version: "2.4.0"   # fija versión para reproducibilidad (ajústala cuando quieras)
+
+# GitHub bootstrap (recomendado)
+github_owner: "HectorBenito"
+github_repo: "HOMELAB"
+github_branch: "main"
+
+# Ruta dentro del repo donde Flux guardará los manifests de sync
+# (te recomiendo que uses una carpeta dedicada)
+flux_path: "{{ playbook_dir }}/../../gitops/clusters/homelab"
+
+# Método auth:
+# - token-auth: usa PAT (más simple)
+# - ssh: con deploy key (más “gitops purista”)
+flux_auth_method: "token"  # "token" o "ssh"
+
+# PAT con permisos repo (classic) o fine-grained (contents write + etc)
+# Lo ideal: exportarlo como variable de entorno GITHUB_TOKEN en tu máquina.
+github_token_env: "GITHUB_TOKEN"
