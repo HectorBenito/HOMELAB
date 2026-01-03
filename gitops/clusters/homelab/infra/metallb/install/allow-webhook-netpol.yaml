@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-metallb-webhook
+  namespace: metallb-system
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/instance: metallb
+      app.kubernetes.io/name: metallb
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        # Permite llamadas desde cualquier namespace (incluido kube-system / apiserver)
+        - namespaceSelector: {}
+      ports:
+        # El service es 443 pero el pod escucha 9443
+        - protocol: TCP
+          port: 9443
