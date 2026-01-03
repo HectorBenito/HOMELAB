@@ -6,6 +6,7 @@
     path: "{{ talos_config_dir }}"
     state: directory
     mode: '0755'
+  become: yes
 
 - name: Check if secrets.yaml already exists
   ansible.builtin.stat:
@@ -110,6 +111,11 @@
       machine:
         network:
           hostname: {{ item.hostname }}
+          interfaces:
+            - interface: ens18
+              dhcp: true
+              vip:
+                ip: {{ cluster_vip_ip }}
         install:
           disk: {{ item.install_disk | default(default_install_disk) }}
       {% if item.longhorn_disk is defined %}
@@ -128,6 +134,9 @@
       machine:
         network:
           hostname: {{ item.hostname }}
+          interfaces:
+            - interface: ens18
+              dhcp: true
         install:
           disk: {{ item.install_disk | default(default_install_disk) }}
       {% if item.longhorn_disk is defined %}
@@ -161,6 +170,7 @@
       --config-patch @machine-features.yaml
       --config-patch-control-plane @{{ item.item.hostname }}-machine.yaml
       --output rendered-{{ item.item.hostname }}
+      --force
     chdir: "{{ talos_config_dir }}"
   loop: "{{ control_plane_configs_exist.results }}"
   when: not item.stat.exists
@@ -187,6 +197,7 @@
       --config-patch @machine-features.yaml
       --config-patch-worker @{{ item.item.hostname }}-machine.yaml
       --output rendered-{{ item.item.hostname }}
+      --force
     chdir: "{{ talos_config_dir }}"
   loop: "{{ worker_configs_exist.results }}"
   when: not item.stat.exists
@@ -226,10 +237,33 @@
 
 - name: Copy talosconfig to rendered directory
   ansible.builtin.copy:
-    src: "{{ talos_config_dir }}/rendered-cp/talosconfig"
+    src: "{{ talos_config_dir }}/rendered-{{ control_plane_configs_exist.results[0].item.hostname }}/talosconfig"
     dest: "{{ talos_config_dir }}/rendered/talosconfig"
     mode: '0644'
     remote_src: true
+  when: not control_plane_configs_exist.results[0].stat.exists
+
+- name: Configure Talos endpoints
+  ansible.builtin.command:
+    cmd: >
+      talosctl config endpoint
+      {{ control_plane_configs_exist.results
+         | map(attribute='item.ip')
+         | join(' ') }}
+  environment:
+    TALOSCONFIG: "{{ talos_config_dir }}/rendered/talosconfig"
+  changed_when: true
+
+- name: Configure Talos nodes
+  ansible.builtin.command:
+    cmd: >
+      talosctl config node
+      {{ control_plane_configs_exist.results
+         | map(attribute='item.ip')
+         | join(' ') }}
+  environment:
+    TALOSCONFIG: "{{ talos_config_dir }}/rendered/talosconfig"
+  changed_when: true
 
 - name: Display configuration generation result
   ansible.builtin.debug:

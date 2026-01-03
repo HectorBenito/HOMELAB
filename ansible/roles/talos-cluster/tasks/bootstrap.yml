@@ -5,20 +5,6 @@
   ansible.builtin.set_fact:
     talosconfig_path: "{{ talos_config_dir }}/rendered/talosconfig"
 
-- name: Configure talosctl endpoint
-  ansible.builtin.command:
-    cmd: talosctl config endpoint {{ talos_nodes.control_planes[0].ip }},{{ talos_nodes.control_planes[1].ip }},{{ talos_nodes.control_planes[2].ip }}
-  environment:
-    TALOSCONFIG: "{{ talosconfig_path }}"
-  changed_when: true
-
-- name: Configure talosctl node
-  ansible.builtin.command:
-    cmd: talosctl config node {{ talos_nodes.control_planes[0].ip }},{{ talos_nodes.control_planes[1].ip }},{{ talos_nodes.control_planes[2].ip }}
-  environment:
-    TALOSCONFIG: "{{ talosconfig_path }}"
-  changed_when: true
-
 - name: Check if nodes are reachable via talosctl
   ansible.builtin.command:
     cmd: talosctl version --short
@@ -45,7 +31,7 @@
 
 - name: Bootstrap Kubernetes cluster
   ansible.builtin.command:
-    cmd: talosctl bootstrap
+    cmd: talosctl bootstrap -n {{ talos_nodes.control_planes[0].ip }}
   environment:
     TALOSCONFIG: "{{ talosconfig_path }}"
   changed_when: true

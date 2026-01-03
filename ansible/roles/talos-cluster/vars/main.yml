@@ -2,7 +2,8 @@
 
 # Cluster configuration
 cluster_name: "nasbenito"
-cluster_endpoint: "https://192.168.110.18:6443"  # Control plane IP
+cluster_endpoint: "https://192.168.110.50:6443"  # Control plane IP
+cluster_vip_ip: "192.168.110.50"  # VIP for control plane
 
 # Default install disk (used if not specified per node)
 default_install_disk: "/dev/sda"
@@ -25,7 +26,7 @@ talos_nodes:
       vmid: 2110
       longhorn_disk: "/dev/sdb"
     - hostname: "talos-control-3"
-      ip: "192.168.110.24"
+      ip: "192.168.110.22"
       vmid: 3110
       longhorn_disk: "/dev/sdb"
   # VM workers
@@ -35,7 +36,7 @@ talos_nodes:
       vmid: 1111
       longhorn_disk: "/dev/sdb" 
     - hostname: "talos-worker-2"
-      ip: "192.168.110.25"
+      ip: "192.168.110.21"
       vmid: 2111
       longhorn_disk: "/dev/sdb" 
     - hostname: "talos-worker-3"

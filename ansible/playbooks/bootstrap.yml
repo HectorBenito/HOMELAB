@@ -1,0 +1,33 @@
+- name: Bootstrapping the cluster
+  hosts: localhost
+  vars:
+    argocd_namespace: argocd
+
+  tasks:
+    - name: Ensure ArgoCD namespace exists
+      kubernetes.core.k8s:
+        api_version: v1
+        kind: Namespace
+        name: "{{ argocd_namespace }}"
+        state: present
+
+    - name: Check if this is the first installation
+      kubernetes.core.k8s_info:
+        kind: Pod
+        namespace: "{{ argocd_namespace }}"
+        label_selectors:
+          - app.kubernetes.io/name=argocd-server
+      register: argocd_pods
+      failed_when: false
+
+    - name: Install / Upgrade ArgoCD with Helm
+      kubernetes.core.helm:
+        name: argocd
+        chart_ref: "{{ playbook_dir }}/../roles/gitops/argocd"
+        release_namespace: "{{ argocd_namespace }}"
+        create_namespace: false
+        dependency_update: true
+        values_files:
+          - "{{ playbook_dir }}/../roles/gitops/argocd/{{ (argocd_pods.resources | length == 0) | ternary('values-seed.yaml', 'values.yaml') }}"
+        wait: true
+        timeout: 10m

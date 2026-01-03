@@ -16,10 +16,14 @@
     chart_version: "{{ cilium_version }}"
     release_namespace: kube-system
     update_repo_cache: true
+    state: present
+    wait: true
+    timeout: 10m
+    atomic: true
     values:
       ipam:
         mode: kubernetes
-      kubeProxyReplacement: false
+      kubeProxyReplacement: true
       securityContext:
         capabilities:
           ciliumAgent:
