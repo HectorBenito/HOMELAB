@@ -4,28 +4,51 @@ metadata:
   name: metallb
   namespace: metallb-system
 spec:
-  interval: 10m
+  interval: 30m
+  timeout: 10m
+
   chart:
     spec:
       chart: metallb
-      version: "0.14.5"
+      version: 0.14.5
       sourceRef:
         kind: HelmRepository
         name: metallb
         namespace: flux-system
-  values:
-    controller:
-      replicas: 1
-    speaker:
-      tolerations:
-        - operator: Exists
-spec:
-  timeout: 10m
+
   install:
     remediation:
       retries: 3
       remediateLastFailure: true
+
   upgrade:
     remediation:
       retries: 3
       remediateLastFailure: true
+
+  values:
+    # Controller (Deployment)
+    controller:
+      replicas: 1
+      tolerations:
+        - operator: Exists
+
+    # Speaker (DaemonSet)
+    speaker:
+      # MetalLB necesita esto sí o sí
+      hostNetwork: true
+
+      tolerations:
+        - operator: Exists
+
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          add:
+            - NET_RAW
+          drop:
+            - ALL
+
+    # FRR (BGP backend usado también en L2)
+    frr:
+      enabled: true
