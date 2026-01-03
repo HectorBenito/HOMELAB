@@ -12,7 +12,7 @@ github_branch: "main"
 
 # Ruta dentro del repo donde Flux guardará los manifests de sync
 # (te recomiendo que uses una carpeta dedicada)
-flux_path: "{{ playbook_dir }}/../../gitops/clusters/homelab"
+flux_path: "gitops/clusters/homelab"
 
 # Método auth:
 # - token-auth: usa PAT (más simple)
