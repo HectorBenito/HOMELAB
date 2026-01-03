@@ -1,5 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ./infra/metallb/install
-  - ./infra/metallb/config
+  - ./infra/metallb/kustomization-install.yaml
+  - ./infra/metallb/kustomization-config.yaml
