@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-metallb-webhook
+  namespace: metallb-system
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/instance: metallb
+      app.kubernetes.io/name: metallb
+  ingress:
+    - fromEntities:
+        # Permite tráfico desde el host (apiserver) y desde cualquier pod/namespace
+        - host
+        - remote-node
+        - cluster
+      toPorts:
+        - ports:
+            - port: "9443"
+              protocol: TCP
