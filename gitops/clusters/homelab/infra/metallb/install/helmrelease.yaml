@@ -19,3 +19,13 @@ spec:
     speaker:
       tolerations:
         - operator: Exists
+spec:
+  timeout: 10m
+  install:
+    remediation:
+      retries: 3
+      remediateLastFailure: true
+  upgrade:
+    remediation:
+      retries: 3
+      remediateLastFailure: true
