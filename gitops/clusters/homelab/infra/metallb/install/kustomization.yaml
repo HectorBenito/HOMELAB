@@ -4,5 +4,4 @@ resources:
   - namespace.yaml
   - helmrepository.yaml
   - helmrelease.yaml
-  - allow-webhook-netpol.yaml
   - allow-webhook-cilium.yaml
