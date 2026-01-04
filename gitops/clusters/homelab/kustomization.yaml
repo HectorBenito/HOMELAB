@@ -4,4 +4,4 @@ resources:
   - ./infra/metallb/kustomization-install.yaml
   - ./infra/metallb/kustomization-config.yaml
   - ./infra/nfs-csi/flux-kustomization.yaml
-  - ./infra/longhorn/kustomization.yaml
+  - ./infra/longhorn/flux-kustomization.yaml
