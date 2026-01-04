@@ -5,4 +5,3 @@ resources:
   - helmrepository.yaml
   - helmrelease.yaml
   - storageclass.yaml
-  - test-pvc-pod.yaml
