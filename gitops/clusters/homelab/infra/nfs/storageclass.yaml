@@ -8,8 +8,8 @@ provisioner: nfs.csi.k8s.io
 parameters:
   server: 192.168.100.11
   share: /mnt/test_pool/test_dataset
-  subDir: ${pvc.namespace}/${pvc.name}
+  subdir: ${pvc.metadata.namespace}/${pvc.metadata.name}
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
 mountOptions:
-  - vers=4.1
+  - nfsvers=4.1
