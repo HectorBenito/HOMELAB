@@ -3,5 +3,4 @@ kind: Kustomization
 resources:
   - ./infra/metallb/kustomization-install.yaml
   - ./infra/metallb/kustomization-config.yaml
-  - ./infra/nfs-csi/kustomization-install.yaml
-  - ./infra/nfs-csi/kustomization-config.yaml
+  - ./infra/nfs-csi/flux-kustomization.yaml
