@@ -1,0 +1,27 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: longhorn
+  namespace: longhorn-system
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: longhorn
+      sourceRef:
+        kind: HelmRepository
+        name: longhorn
+        namespace: flux-system
+      interval: 1h
+  values:
+    persistence:
+      defaultClass: true
+      defaultFsType: ext4
+    defaultSettings:
+      # En un clúster de 3 nodos, 3 réplicas = alta disponibilidad
+      defaultReplicaCount: 3
+      replicaCount: 3
+
+      # (Opcional) Recomiendo reservar algo de espacio para evitar llenados
+      storageOverProvisioningPercentage: 200
+      storageMinimalAvailablePercentage: 10
