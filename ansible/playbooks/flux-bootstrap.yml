@@ -1,7 +1,18 @@
 ---
+# Setup FluxCD and SOPS in a Kubernetes cluster
+
 - name: Bootstrap FluxCD in Kubernetes
   hosts: localhost
+  connection: local
   gather_facts: true
 
-  roles:
-    - role: fluxcd
+  tasks:
+    - name: Check prerequisites
+      ansible.builtin.include_role:
+        name: fluxcd
+        tasks_from: configure-flux.yml
+
+    - name: Wait for Talos nodes
+      ansible.builtin.include_role:
+        name: fluxcd
+        tasks_from: configure-sops.yml

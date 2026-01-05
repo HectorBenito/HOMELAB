@@ -1,6 +1,14 @@
 ---
+# Cluster configuration
+cluster_name: "nasbenito"
+cluster_endpoint: "https://192.168.110.50:6443"  # Control plane IP
+cluster_vip_ip: "192.168.110.50"  # VIP for control plane
+
 # Kubeconfig que ya generas con Talos/Ansible
 kubeconfig_path: "{{ playbook_dir }}/../../talos-nasbenito/rendered/kubeconfig"
+
+# Talos configuration directory (relative to repo root)
+talos_config_dir: "{{ playbook_dir }}/../../talos-{{ cluster_name }}"
 
 # Flux
 flux_version: "2.4.0"   # fija versión para reproducibilidad (ajústala cuando quieras)

@@ -1,0 +1,82 @@
+---
+- name: Ensure kubectl can reach the cluster
+  ansible.builtin.command: kubectl --kubeconfig {{ kubeconfig_path }} get nodes
+  changed_when: false
+
+- name: Ensure required local tools are present (curl, git)
+  ansible.builtin.command: bash -lc "command -v {{ item }}"
+  loop:
+    - curl
+    - git
+  changed_when: false
+
+- name: Download flux CLI (linux amd64) if missing
+  ansible.builtin.shell: |
+    set -euo pipefail
+    DEST="${HOME}/.local/bin/flux"
+    if [ -x "$DEST" ]; then
+      exit 0
+    fi
+    mkdir -p "${HOME}/.local/bin"
+    curl -fsSL "https://github.com/fluxcd/flux2/releases/download/v{{ flux_version }}/flux_{{ flux_version }}_linux_amd64.tar.gz" \
+      | tar -xz -C "${HOME}/.local/bin" flux
+    chmod +x "$DEST"
+  args:
+    executable: /bin/bash
+  changed_when: false
+
+- name: Show flux version
+  ansible.builtin.command: "{{ ansible_env.HOME }}/.local/bin/flux --version"
+  changed_when: false
+
+- name: Flux preflight checks
+  ansible.builtin.command: >
+    {{ ansible_env.HOME }}/.local/bin/flux check --pre
+    --kubeconfig {{ kubeconfig_path }}
+  changed_when: false
+
+- name: Check if flux-system namespace exists
+  ansible.builtin.command: kubectl --kubeconfig {{ kubeconfig_path }} get ns flux-system
+  register: flux_ns
+  changed_when: false
+  failed_when: false
+
+- name: Install Flux components (only if not installed)
+  ansible.builtin.command: >
+    {{ ansible_env.HOME }}/.local/bin/flux install
+    --kubeconfig {{ kubeconfig_path }}
+  when: flux_ns.rc != 0
+  changed_when: true
+
+# --- Bootstrap to GitHub ---
+- name: Assert GitHub token is available when using token auth
+  ansible.builtin.assert:
+    that:
+      - lookup('env', github_token_env) | length > 0
+    fail_msg: "Missing GitHub token. Export {{ github_token_env }} in your shell before running."
+  when: flux_auth_method == "token"
+
+- name: Check if Flux is already bootstrapped (GitRepository exists)
+  ansible.builtin.command: >
+    kubectl --kubeconfig {{ kubeconfig_path }}
+    -n flux-system get gitrepositories.source.toolkit.fluxcd.io
+  register: flux_gitrepos
+  changed_when: false
+  failed_when: false
+
+- name: Bootstrap Flux to GitHub (token auth)
+  ansible.builtin.command: >
+    {{ ansible_env.HOME }}/.local/bin/flux bootstrap github
+    --owner {{ github_owner }}
+    --repository {{ github_repo }}
+    --branch {{ github_branch }}
+    --path {{ flux_path }}
+    --personal
+    --token-auth
+    --kubeconfig {{ kubeconfig_path }}
+  environment:
+    GITHUB_TOKEN: "{{ lookup('env', github_token_env) }}"
+  when:
+    - flux_auth_method == "token"
+    - flux_gitrepos.rc != 0 or (github_repo not in (flux_gitrepos.stdout | default('')))
+  changed_when: true

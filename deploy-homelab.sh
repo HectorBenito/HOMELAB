@@ -42,6 +42,8 @@ KUBECTL_INSTALLED=true
 TALOSCTL_INSTALLED=true
 HELM_INSTALLED=true
 PYTHON_INSTALLED=true
+AGE_INSTALLED=true
+SOPS_INSTALLED=true
 
 # Parse arguments
 for arg in "$@"; do
@@ -171,6 +173,21 @@ install_tools() {
         pip install --upgrade pip
         pip install ansible kubernetes openshift
     fi
+
+    if [ "$AGE_INSTALLED" = false ]; then
+        log "Installing age..."
+        # Installation commands for age
+        sudo apt install -y age
+    fi
+
+    if [ "$SOPS_INSTALLED" = false ]; then
+        log "Installing SOPS..."
+        # Installation commands for SOPS
+        SOPS_LATEST_VERSION=$(curl -s "https://api.github.com/repos/getsops/sops/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+')
+        curl -Lo sops.deb "https://github.com/getsops/sops/releases/download/v${SOPS_LATEST_VERSION}/sops_${SOPS_LATEST_VERSION}_amd64.deb"
+        sudo apt --fix-broken install ./sops.deb
+        rm -rf sops.deb
+    fi
 }
 
 check_prerequisites() {
@@ -214,6 +231,18 @@ import kubernetes
 print(kubernetes.__version__)
 EOF
         PYTHON_INSTALLED=false
+    fi
+
+    # Check age
+    if ! command -v age &> /dev/null; then
+        missing_tools+=("age")
+        AGE_INSTALLED=false
+    fi
+
+    # Check SOPS
+    if ! command -version sops &> /dev/null; then
+        missing_tools+=("sops")
+        SOPS_INSTALLED=false
     fi
 
     if [ ${#missing_tools[@]} -ne 0 ]; then

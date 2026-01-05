@@ -5,3 +5,8 @@ resources:
   - ./infra/metallb/kustomization-config.yaml
   - ./infra/nfs-csi/flux-kustomization.yaml
   - ./infra/longhorn/flux-kustomization.yaml
+  - ./infra/cert-manager/flux-kustomization.yaml
+  - ./infra/traefik/flux-kustomization.yaml
+  - ./security/cert-manager-issuers/flux-kustomization.yaml
+  - ./security/cloudflare/flux-kustomization.yaml
+  - ./apps/test-whoami/flux-kustomization.yaml
