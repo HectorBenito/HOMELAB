@@ -50,5 +50,8 @@ spec:
     additionalArguments:
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      # Trust X-Forwarded-* headers from Cloudflare Tunnel
+      - "--entrypoints.web.forwardedHeaders.insecure=true"
+      - "--entrypoints.websecure.forwardedHeaders.insecure=true"
       # (opcional) logs más verbosos al principio
       # - "--log.level=DEBUG"
