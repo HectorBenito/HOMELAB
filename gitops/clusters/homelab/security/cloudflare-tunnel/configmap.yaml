@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflared-config
+  namespace: cloudflared
+data:
+  config.yaml: |
+    tunnel: homelab
+    credentials-file: /etc/cloudflared/creds/credentials.json
+
+    # (Opcional) logs más verbosos al principio
+    # loglevel: info
+
+    ingress:
+      - hostname: whoami.nasbenito.com
+        service: http://traefik.traefik.svc.cluster.local:80
+      - service: http_status:404

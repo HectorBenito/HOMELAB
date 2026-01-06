@@ -44,6 +44,7 @@ HELM_INSTALLED=true
 PYTHON_INSTALLED=true
 AGE_INSTALLED=true
 SOPS_INSTALLED=true
+CLOUDFLARED_INSTALLED=true
 
 # Parse arguments
 for arg in "$@"; do
@@ -188,6 +189,18 @@ install_tools() {
         sudo apt --fix-broken install ./sops.deb
         rm -rf sops.deb
     fi
+
+    if [ "$CLOUDFLARED_INSTALLED" = false ]; then
+        log "Installing Cloudflared..."
+        # Installation commands for Cloudflared
+        # 1. Download the Cloudflare GPG key and add it to your system's keyring
+        curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloudflare-archive-keyring.gpg
+        # 2. Add the Cloudflare repository to your APT sources
+        echo "deb [signed-by=/usr/share/keyrings/cloudflare-archive-keyring.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
+        # 3. Update your package list and install cloudflared
+        sudo apt update
+        sudo apt install cloudflared -y
+    fi
 }
 
 check_prerequisites() {
@@ -240,9 +253,15 @@ EOF
     fi
 
     # Check SOPS
-    if ! command -version sops &> /dev/null; then
+    if ! command -v sops &> /dev/null; then
         missing_tools+=("sops")
         SOPS_INSTALLED=false
+    fi
+
+    # Check Cloudflared
+    if ! command -v cloudflared &> /dev/null; then
+        missing_tools+=("cloudflared")
+        CLOUDFLARED_INSTALLED=false
     fi
 
     if [ ${#missing_tools[@]} -ne 0 ]; then
