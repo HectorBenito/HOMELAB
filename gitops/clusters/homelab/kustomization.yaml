@@ -8,6 +8,7 @@ resources:
   - ./infra/cert-manager/flux-kustomization.yaml
   - ./infra/traefik/flux-kustomization.yaml
   - ./infra/traefik-dashboard/flux-kustomization.yaml
+  - ./infra/coredns/flux-kustomization.yaml
   - ./security/cert-manager-issuers/flux-kustomization.yaml
   - ./security/cloudflare/flux-kustomization.yaml
   - ./security/cloudflare-tunnel/flux-kustomization.yaml
