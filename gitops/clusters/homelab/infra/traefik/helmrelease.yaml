@@ -23,6 +23,9 @@ spec:
         loadBalancerIP: 192.168.110.242
         externalTrafficPolicy: Local
 
+    api:
+      dashboard: true
+      
     ports:
       web:
         port: 80
