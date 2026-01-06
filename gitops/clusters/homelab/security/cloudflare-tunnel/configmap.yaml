@@ -13,5 +13,5 @@ data:
 
     ingress:
       - hostname: whoami.nasbenito.com
-        service: http://traefik.traefik.svc.cluster.local:80
+        service: http://whoami.test-whoami.svc.cluster.local:80
       - service: http_status:404
