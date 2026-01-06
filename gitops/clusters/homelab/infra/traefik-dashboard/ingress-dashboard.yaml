@@ -5,6 +5,9 @@ metadata:
   namespace: traefik
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-dns01
+
+    # Aplica el middleware (namespace@kubernetescrd)
+    traefik.ingress.kubernetes.io/router.middlewares: traefik-lan-only@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
@@ -15,7 +18,15 @@ spec:
     - host: traefik.local.nasbenito.com
       http:
         paths:
-          - path: /
+          # Traefik dashboard vive en /dashboard/ (y API en /api)
+          - path: /dashboard
+            pathType: Prefix
+            backend:
+              service:
+                name: traefik
+                port:
+                  number: 9000
+          - path: /api
             pathType: Prefix
             backend:
               service:
