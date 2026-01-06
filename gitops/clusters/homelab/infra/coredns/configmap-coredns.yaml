@@ -10,10 +10,10 @@ data:
         health
         ready
 
-        # ZONA LOCAL
-        file /etc/coredns/zones/nasbenito.com nasbenito.com
+        # ZONA LAN: local.nasbenito.com
+        file /etc/coredns/zones/local.nasbenito.com.db local.nasbenito.com
 
-        # Forward externo
+        # Resolver el resto hacia fuera
         forward . 1.1.1.1 8.8.8.8
 
         cache 30
@@ -21,18 +21,23 @@ data:
         log
     }
 
-  nasbenito.com: |
+  local.nasbenito.com.db: |
     $TTL 60
-    @   IN SOA ns.nasbenito.com. (
-            2026010601
+    @   IN SOA ns.local.nasbenito.com. (
+            2026010701
             7200
             3600
             1209600
             60
     )
+        IN NS ns.local.nasbenito.com.
 
-        IN NS ns.nasbenito.com.
+    # El propio DNS (opcional)
+    ns          IN A 192.168.110.243
 
-    ns          IN A 192.168.110.242
-    whoami      IN A 192.168.110.242
+    # Traefik (LB LAN)
     traefik     IN A 192.168.110.242
+
+    # Wildcard para servicios internos
+    *           IN A 192.168.110.242
+
