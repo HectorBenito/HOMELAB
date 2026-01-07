@@ -48,6 +48,7 @@ data:
 
     ; Traefik (LB LAN)
     traefik     IN A 192.168.110.242
+    whoami      IN A 192.168.110.242
 
     ; Wildcard para servicios internos
     *           IN A 192.168.110.242
