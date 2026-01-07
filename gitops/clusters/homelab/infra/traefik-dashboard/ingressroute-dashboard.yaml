@@ -7,11 +7,10 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`traefik.local.nasbenito.com`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))
+    - match: Host(`traefik.local.nasbenito.com`)
       kind: Rule
       middlewares:
         - name: lan-only
-        - name: traefik-dashboard-stripprefix
       services:
         - name: api@internal
           kind: TraefikService
