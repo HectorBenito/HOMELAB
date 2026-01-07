@@ -4,6 +4,6 @@ metadata:
   name: traefik-dashboard-stripprefix
   namespace: traefik
 spec:
-  stripPrefix:
-    prefixes:
-      - /dashboard
+  stripPrefixRegex:
+    regex:
+      - "^/dashboard"
