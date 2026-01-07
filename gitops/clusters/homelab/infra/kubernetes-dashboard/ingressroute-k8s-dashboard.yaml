@@ -12,6 +12,8 @@ spec:
       middlewares:
         - name: lan-only
           namespace: kubernetes-dashboard
+        - name: dashboard-https-headers
+          namespace: kubernetes-dashboard
       services:
         - name: kubernetes-dashboard-kong-proxy
           namespace: kubernetes-dashboard

@@ -10,3 +10,4 @@ resources:
   - certificate-k8s-dashboard.yaml
   - middleware-lan-only.yaml
   - rbac-dashboard-admin.yaml
+  - middleware-headers-https.yaml
