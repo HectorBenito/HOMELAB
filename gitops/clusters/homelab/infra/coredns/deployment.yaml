@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: coredns
-          image: coredns/coredns:1.11.1
+          image: registry.k8s.io/coredns/coredns:v1.12.4
           args: ["-conf", "/etc/coredns/Corefile"]
           ports:
             - containerPort: 53

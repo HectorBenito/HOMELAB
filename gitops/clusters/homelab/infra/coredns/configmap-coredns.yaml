@@ -9,7 +9,7 @@ data:
     local.nasbenito.com:53 {
         errors
         log
-        file /etc/coredns/zones/local.nasbenito.com.db
+        file /etc/coredns/local.nasbenito.com.db
         cache 30
     }
 
