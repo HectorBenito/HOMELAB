@@ -2,6 +2,6 @@ apiVersion: traefik.io/v1alpha1
 kind: ServersTransport
 metadata:
   name: k8s-dashboard-kong-transport
-  namespace: traefik
+  namespace: kubernetes-dashboard
 spec:
   insecureSkipVerify: true
