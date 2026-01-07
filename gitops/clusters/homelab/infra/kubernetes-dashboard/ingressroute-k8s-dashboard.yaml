@@ -17,7 +17,8 @@ spec:
       services:
         - name: kubernetes-dashboard-kong-proxy
           namespace: kubernetes-dashboard
-          port: 80
-          scheme: http
+          port: 443
+          scheme: https
+          serversTransport: kong-upstream-insecure
   tls:
     secretName: k8s-dashboard-tls
