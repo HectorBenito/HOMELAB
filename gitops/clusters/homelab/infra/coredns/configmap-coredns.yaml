@@ -5,16 +5,24 @@ metadata:
   namespace: coredns
 data:
   Corefile: |
+    # ZONA LAN autoritativa (split-horizon)
+    local.nasbenito.com:53 {
+        errors
+        log
+        file /etc/coredns/zones/local.nasbenito.com.db
+        cache 30
+    }
+
+    # Resto de dominios (recursivo hacia fuera)
     .:53 {
         errors
         health
         ready
+        log
 
-        # ZONA LAN: local.nasbenito.com
-        file /etc/coredns/zones/local.nasbenito.com.db local.nasbenito.com
-
-        # Resolver el resto hacia fuera
-        forward . 1.1.1.1 8.8.8.8
+        forward . 1.1.1.1 8.8.8.8 {
+          max_concurrent 1000
+        }
 
         cache 30
         reload
@@ -22,22 +30,24 @@ data:
     }
 
   local.nasbenito.com.db: |
+    $ORIGIN local.nasbenito.com.
     $TTL 60
-    @ IN SOA ns.local.nasbenito.com. admin.local.nasbenito.com. (
-            2026010701
-            7200
-            3600
-            1209600
-            60
-    )
-        IN NS ns.local.nasbenito.com.
 
-    # El propio DNS (opcional)
+    @   IN SOA ns.local.nasbenito.com. hostmaster.local.nasbenito.com. (
+            2026010701 ; serial
+            3600       ; refresh
+            600        ; retry
+            86400      ; expire
+            60         ; minimum
+    )
+
+    @           IN NS ns.local.nasbenito.com.
+
+    ; El propio DNS (opcional)
     ns          IN A 192.168.110.243
 
-    # Traefik (LB LAN)
+    ; Traefik (LB LAN)
     traefik     IN A 192.168.110.242
 
-    # Wildcard para servicios internos
+    ; Wildcard para servicios internos
     *           IN A 192.168.110.242
-
