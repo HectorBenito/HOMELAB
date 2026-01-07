@@ -9,3 +9,4 @@ resources:
   - ingressroute-k8s-dashboard.yaml
   - certificate-k8s-dashboard.yaml
   - middleware-lan-only.yaml
+  - rbac-dashboard-admin.yaml
