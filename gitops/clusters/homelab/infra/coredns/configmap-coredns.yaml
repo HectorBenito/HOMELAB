@@ -23,7 +23,7 @@ data:
 
   local.nasbenito.com.db: |
     $TTL 60
-    @   IN SOA ns.local.nasbenito.com. (
+    @ IN SOA ns.local.nasbenito.com. admin.local.nasbenito.com. (
             2026010701
             7200
             3600
