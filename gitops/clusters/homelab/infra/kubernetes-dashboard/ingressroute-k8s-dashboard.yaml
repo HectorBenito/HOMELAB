@@ -11,7 +11,7 @@ spec:
       kind: Rule
       middlewares:
         - name: lan-only
-          namespace: traefik
+          namespace: kubernetes-dashboard
       services:
         - name: kubernetes-dashboard-kong-proxy
           namespace: kubernetes-dashboard
