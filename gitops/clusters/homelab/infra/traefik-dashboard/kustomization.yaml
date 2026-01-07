@@ -4,4 +4,4 @@ resources:
   - middleware-lan-only.yaml
   - middleware-traefik-dashboard-stripprefix.yaml
   - ingressroute-dashboard.yaml
-  - Certificate-traefik-dashboard-tls.yaml
+  - certificate-traefik-dashboard-tls.yaml
