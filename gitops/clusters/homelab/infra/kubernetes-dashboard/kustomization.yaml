@@ -8,3 +8,4 @@ resources:
   - servers-transport-k8s-dashboard.yaml
   - ingressroute-k8s-dashboard.yaml
   - certificate-k8s-dashboard.yaml
+  - middleware-lan-only.yaml
