@@ -19,6 +19,8 @@ spec:
       containers:
         - name: freeipa
           image: freeipa/freeipa-server:almalinux-10
+          securityContext:
+            privileged: true
           imagePullPolicy: IfNotPresent
           envFrom:
             - secretRef:
