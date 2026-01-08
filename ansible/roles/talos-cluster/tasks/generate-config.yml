@@ -42,6 +42,15 @@
     dest: "{{ talos_config_dir }}/allowcontrolplanes.yaml"
     mode: '0644'
 
+- name: Create user namespaces patch
+  ansible.builtin.copy:
+    content: |
+      machine:
+        sysctls:
+          user.max_user_namespaces: "15000"
+    dest: "{{ talos_config_dir }}/userns-patch.yaml"
+    mode: '0644'
+
 - name: Create installer image version patch
   ansible.builtin.copy:
     content: |
@@ -164,6 +173,7 @@
       --kubernetes-version v{{ kubernetes_version }}
       --config-patch @cni.yaml
       --config-patch @allowcontrolplanes.yaml
+      --config-patch @userns-patch.yaml
       --config-patch @kubelet-certs.yaml
       --config-patch @kubelet-cert-approver.yaml
       --config-patch @system-extensions.yaml
@@ -191,6 +201,7 @@
       --kubernetes-version v{{ kubernetes_version }}
       --config-patch @cni.yaml
       --config-patch @allowcontrolplanes.yaml
+      --config-patch @userns-patch.yaml
       --config-patch @kubelet-certs.yaml
       --config-patch @kubelet-cert-approver.yaml
       --config-patch @system-extensions.yaml
