@@ -5,7 +5,7 @@ metadata:
   namespace: freeipa
   annotations:
     metallb.universe.tf/address-pool: lan-pool
-    metallb.universe.tf/loadBalancerIPs: "192.168.110.244"
+    metallb.universe.tf/loadBalancerIPs: "192.168.110.249"
 spec:
   type: LoadBalancer
   selector:
