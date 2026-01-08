@@ -32,7 +32,6 @@ spec:
               value: "1"
           args:
             - "ipa-server-install"
-            - "no-exit"
             - "-U"
             - "--no-ntp"
             - "--no-dns"
