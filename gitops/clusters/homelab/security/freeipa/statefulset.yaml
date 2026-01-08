@@ -34,8 +34,6 @@ spec:
             - "-U"
             - "--no-ntp"
             - "--skip-mem-check"
-            - "--hostname"
-            - "$(IPA_SERVER_HOSTNAME)"
             - "-r"
             - "$(IPA_SERVER_REALM)"
             - "-n"
