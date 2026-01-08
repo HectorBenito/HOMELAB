@@ -46,7 +46,7 @@ data:
     ; El propio DNS (opcional)
     ns          IN A 192.168.110.243
 
-    ; Traefik (LB LAN)
+    ; Traefik (MetalLB LAN)
     traefik     IN A 192.168.110.242
     whoami      IN A 192.168.110.242
     kube        IN A 192.168.110.242

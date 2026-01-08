@@ -24,11 +24,6 @@ spec:
           envFrom:
             - secretRef:
                 name: freeipa-bootstrap
-          env:
-            - name: DEBUG_NO_EXIT
-              value: "1"
-            - name: DEBUG_TRACE
-              value: "1"
           args:
             - "ipa-server-install"
             - "-U"
