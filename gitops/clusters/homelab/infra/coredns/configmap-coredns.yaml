@@ -50,6 +50,7 @@ data:
     traefik     IN A 192.168.110.242
     whoami      IN A 192.168.110.242
     kube        IN A 192.168.110.242
+    ipa         IN A 192.168.110.244
 
     ; Wildcard para servicios internos
     *           IN A 192.168.110.242

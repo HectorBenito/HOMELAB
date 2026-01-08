@@ -1,0 +1,22 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: security-freeipa
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./gitops/clusters/homelab/security//freeipa
+  prune: true
+  wait: true
+  timeout: 20m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  # Si usas SOPS con Flux (recomendado), deja esto activado.
+  # Si ya lo tienes resuelto por controlador/kustomize-controller a nivel global, también vale.
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  # Opcional pero recomendable para orden: reintenta en fallos transient
+  retryInterval: 2m

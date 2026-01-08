@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: freeipa
+  namespace: freeipa
+spec:
+  serviceName: freeipa
+  replicas: 1
+  selector:
+    matchLabels:
+      app: freeipa
+  template:
+    metadata:
+      labels:
+        app: freeipa
+    spec:
+      hostUsers: false
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: freeipa
+          image: freeipa/freeipa-server:almalinux-10
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: freeipa-bootstrap
+          args:
+            - "ipa-server-install"
+            - "-U"
+            - "--no-ntp"
+            - "--no-dns"
+            - "-r"
+            - "$(IPA_SERVER_REALM)"
+            - "-n"
+            - "$(IPA_SERVER_DOMAIN)"
+            - "-p"
+            - "$(IPA_DM_PASSWORD)"
+            - "-a"
+            - "$(IPA_ADMIN_PASSWORD)"
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+            - name: ldap
+              containerPort: 389
+            - name: ldaps
+              containerPort: 636
+            - name: kerberos-tcp
+              containerPort: 88
+              protocol: TCP
+            - name: kerberos-udp
+              containerPort: 88
+              protocol: UDP
+            - name: kpasswd-tcp
+              containerPort: 464
+              protocol: TCP
+            - name: kpasswd-udp
+              containerPort: 464
+              protocol: UDP
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          startupProbe:
+            httpGet:
+              path: /
+              port: 80
+            failureThreshold: 40
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 120
+            periodSeconds: 30
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: freeipa-data
