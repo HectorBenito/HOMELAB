@@ -35,6 +35,7 @@ spec:
             - "-U"
             - "--no-ntp"
             - "--no-dns"
+            - "--skip-mem-check"
             - "-r"
             - "$(IPA_SERVER_REALM)"
             - "-n"
@@ -74,10 +75,6 @@ spec:
               mountPath: /run/lock
             - name: tmp
               mountPath: /tmp
-            # cgroups for systemd inside container
-            - name: cgroup
-              mountPath: /sys/fs/cgroup
-              readOnly: true
           startupProbe:
             httpGet:
               path: /
@@ -110,6 +107,3 @@ spec:
           emptyDir:
             medium: Memory
         - name: cgroup
-          hostPath:
-            path: /sys/fs/cgroup
-            type: Directory
