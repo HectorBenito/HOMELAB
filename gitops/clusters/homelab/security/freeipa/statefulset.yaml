@@ -68,6 +68,17 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+            # systemd expects these to be writable tmpfs-like dirs
+            - name: run
+              mountPath: /run
+            - name: run-lock
+              mountPath: /run/lock
+            - name: tmp
+              mountPath: /tmp
+            # cgroups for systemd inside container
+            - name: cgroup
+              mountPath: /sys/fs/cgroup
+              readOnly: true
           startupProbe:
             httpGet:
               path: /
