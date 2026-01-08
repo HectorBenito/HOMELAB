@@ -114,6 +114,24 @@
     dest: "{{ talos_config_dir }}/machine-features.yaml"
     mode: '0644'
 
+- name: Create OIDC patch (public CA / Let's Encrypt)
+  ansible.builtin.copy:
+    content: |
+      cluster:
+        apiServer:
+          extraArgs:
+            oidc-issuer-url: "{{ talos_oidc_issuer_url }}"
+            oidc-client-id: "{{ talos_oidc_client_id }}"
+            oidc-username-claim: "{{ talos_oidc_username_claim }}"
+            oidc-groups-claim: "{{ talos_oidc_groups_claim }}"
+            oidc-username-prefix: "{{ talos_oidc_username_prefix }}"
+            oidc-groups-prefix: "{{ talos_oidc_groups_prefix }}"
+    dest: "{{ talos_config_dir }}/oidc.yaml"
+    mode: '0644'
+  when:
+    - talos_oidc_issuer_url is defined
+    - talos_oidc_issuer_url | length > 0
+
 - name: Create control plane machine patches (hostname + install disk + longhorn disk)
   ansible.builtin.copy:
     content: |
@@ -178,6 +196,7 @@
       --config-patch @kubelet-cert-approver.yaml
       --config-patch @system-extensions.yaml
       --config-patch @machine-features.yaml
+      --config-patch-control-plane @oidc.yaml
       --config-patch-control-plane @{{ item.item.hostname }}-machine.yaml
       --output rendered-{{ item.item.hostname }}
       --force
@@ -206,6 +225,7 @@
       --config-patch @kubelet-cert-approver.yaml
       --config-patch @system-extensions.yaml
       --config-patch @machine-features.yaml
+      --config-patch-control-plane @oidc.yaml
       --config-patch-worker @{{ item.item.hostname }}-machine.yaml
       --output rendered-{{ item.item.hostname }}
       --force

@@ -70,3 +70,10 @@ cilium_version: "1.16.5"
 # Wait timeouts (in seconds)
 wait_timeout_nodes: 600
 wait_timeout_cilium: 300
+
+talos_oidc_issuer_url: "https://auth.nasbenito.com/application/o/kubernetes/"
+talos_oidc_client_id: "kubernetes"
+talos_oidc_username_claim: "preferred_username"
+talos_oidc_groups_claim: "groups"
+talos_oidc_username_prefix: "oidc:"
+talos_oidc_groups_prefix: "oidc:"

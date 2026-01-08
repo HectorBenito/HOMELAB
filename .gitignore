@@ -98,3 +98,5 @@ velero-backups/
 node_modules/
 *.crt
 *.json
+talos-nasbenito/
+/talos-nasbenito/
