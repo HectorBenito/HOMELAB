@@ -14,7 +14,6 @@ spec:
       labels:
         app: freeipa
     spec:
-      hostUsers: false
       terminationGracePeriodSeconds: 120
       containers:
         - name: freeipa
@@ -106,4 +105,3 @@ spec:
         - name: tmp
           emptyDir:
             medium: Memory
-        - name: cgroup
