@@ -101,3 +101,16 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: freeipa-data
+        - name: run
+          emptyDir:
+            medium: Memory
+        - name: run-lock
+          emptyDir:
+            medium: Memory
+        - name: tmp
+          emptyDir:
+            medium: Memory
+        - name: cgroup
+          hostPath:
+            path: /sys/fs/cgroup
+            type: Directory
