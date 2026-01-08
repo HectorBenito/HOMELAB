@@ -26,7 +26,6 @@ data:
 
         cache 30
         reload
-        log
     }
 
   local.nasbenito.com.db: |
