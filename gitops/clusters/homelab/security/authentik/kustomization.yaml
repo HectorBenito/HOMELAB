@@ -9,8 +9,14 @@ resources:
   - ingress.yaml
 
 patches:
-  - path: patch-deployments-envfrom.yaml
+  - path: patch-deployments-servers.yaml
     target:
       kind: Deployment
-      name: authentik-server|authentik-worker
+      name: authentik-server
+      namespace: authentik
+
+    - path: patch-deployments-workers.yaml
+    target:
+      kind: Deployment
+      name: authentik-worker
       namespace: authentik
