@@ -15,7 +15,7 @@ patches:
       name: authentik-server
       namespace: authentik
 
-    - path: patch-deployments-workers.yaml
+  - path: patch-deployments-workers.yaml
     target:
       kind: Deployment
       name: authentik-worker
