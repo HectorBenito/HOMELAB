@@ -21,4 +21,4 @@ spec:
               service:
                 name: authentik-server
                 port:
-                  number: 9000
+                  number: 80
