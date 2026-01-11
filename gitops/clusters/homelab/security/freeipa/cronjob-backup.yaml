@@ -4,7 +4,7 @@ metadata:
   name: freeipa-backup
   namespace: freeipa
 spec:
-  schedule: "15 3 * * *"          # Diario 03:15 UTC
+  schedule: "15 3 * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 5
@@ -13,34 +13,50 @@ spec:
       backoffLimit: 1
       template:
         spec:
+          serviceAccountName: freeipa-backup
           restartPolicy: OnFailure
           containers:
             - name: backup
-              image: freeipa/freeipa-server:almalinux-10
-              securityContext:
-                privileged: true
-              command: ["/bin/bash","-lc"]
+              image: bitnami/kubectl:latest
+              command: ["/bin/sh","-lc"]
               args:
                 - |
                   set -euo pipefail
+
+                  TS="$(date -u +%Y%m%dT%H%M%SZ)"
                   DATE="$(date -u +%Y-%m-%d)"
                   DEST="/backup/freeipa/daily/${DATE}"
                   mkdir -p "${DEST}"
 
-                  echo "[*] Running ipa-backup..."
-                  ipa-backup
+                  OUT="${DEST}/freeipa-backup-${TS}.tar.gz"
 
-                  echo "[*] Locating latest backup tar..."
-                  LATEST="$(ls -1t /var/lib/ipa/backup/*.tar | head -n1)"
+                  echo "[*] Running ipa-backup (data + logs) on freeipa-0..."
+                  kubectl -n freeipa exec freeipa-0 -- bash -lc 'ipa-backup --data; ipa-backup --logs'
 
-                  echo "[*] Copying ${LATEST} to NFS..."
-                  cp -av "${LATEST}" "${DEST}/"
-                  sha256sum "${DEST}/"*.tar > "${DEST}/SHA256SUMS"
+                  echo "[*] Finding latest backup directories..."
+                  LATEST_FULL_DIR="$(kubectl -n freeipa exec freeipa-0 -- bash -lc 'ls -1dt /var/lib/ipa/backup/ipa-full-* 2>/dev/null | head -n1')"
+                  LATEST_DATA_DIR="$(kubectl -n freeipa exec freeipa-0 -- bash -lc 'ls -1dt /var/lib/ipa/backup/ipa-data-* 2>/dev/null | head -n1')"
+
+                  echo "    full dir: ${LATEST_FULL_DIR}"
+                  echo "    data dir: ${LATEST_DATA_DIR}"
+
+                  kubectl -n freeipa exec freeipa-0 -- bash -lc "test -n '${LATEST_FULL_DIR}' -a -d '${LATEST_FULL_DIR}'"
+                  kubectl -n freeipa exec freeipa-0 -- bash -lc "test -n '${LATEST_DATA_DIR}' -a -d '${LATEST_DATA_DIR}'"
+
+                  echo "[*] Creating compressed archive on NFS: ${OUT}"
+                  # Stream tar from freeipa-0 to this pod, compress on-the-fly, write to NFS
+                  kubectl -n freeipa exec freeipa-0 -- bash -lc \
+                    "tar -C /var/lib/ipa/backup -cf - '$(basename "${LATEST_FULL_DIR}")' '$(basename "${LATEST_DATA_DIR}")'" \
+                    | gzip -9 > "${OUT}"
+
+                  echo "[*] Checksums..."
+                  ( cd "${DEST}" && sha256sum "freeipa-backup-${TS}.tar.gz" >> SHA256SUMS )
 
                   echo "[*] Retention: keep last 30 daily backups..."
-                  ls -1dt /backup/freeipa/daily/* | tail -n +31 | xargs -r rm -rf
+                  ls -1dt /backup/freeipa/daily/* 2>/dev/null | tail -n +31 | xargs -r rm -rf
 
-                  echo "[+] Backup completed successfully."
+                  echo "[+] Done. Listing ${DEST}:"
+                  ls -lah "${DEST}" | tail -n +1
               volumeMounts:
                 - name: backup
                   mountPath: /backup

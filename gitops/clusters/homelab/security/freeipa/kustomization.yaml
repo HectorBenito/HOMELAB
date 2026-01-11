@@ -9,3 +9,4 @@ resources:
   - storageclass-nfs.yaml
   - pvc-backups-nfs.yaml
   - cronjob-backup.yaml
+  - rbac-backup.yaml
