@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - helmrepository.yaml
-  - authentik-secret.sops.yaml
+  - authentik-values.secret.sops.yaml
+  - authentik-config.secret.sops.yaml
   - helmrelease.yaml
   - ingress.yaml
