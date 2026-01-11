@@ -15,8 +15,16 @@ spec:
         spec:
           serviceAccountName: freeipa-backup
           restartPolicy: OnFailure
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: "OnRootMismatch"
           containers:
             - name: backup
+              securityContext:
+                runAsUser: 568
+                runAsGroup: 568
               image: bitnami/kubectl:latest
               command: ["/bin/sh","-lc"]
               args:
