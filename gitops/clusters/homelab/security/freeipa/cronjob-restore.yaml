@@ -71,10 +71,11 @@ spec:
                   echo "    dir : ${SRC_DIR}"
                   echo "    file: ${SRC_FILE}"
 
-                  # 2) Checksum (si existe SHA256SUMS)
+                  # 2) Checksum (si existe SHA256SUMS) - estricto
                   if [ -f "${SRC_DIR}/SHA256SUMS" ]; then
-                    echo "[*] Verifying SHA256SUMS..."
-                    ( cd "${SRC_DIR}" && sha256sum -c SHA256SUMS | grep -E "OK$" || true )
+                    echo "[*] Verifying checksum for selected file..."
+                    ( cd "${SRC_DIR}" && sha256sum -c SHA256SUMS | grep -F "$(basename "${SRC_FILE}")" | grep -q "OK$" )
+                    echo "    checksum: OK"
                   else
                     echo "[WARN] SHA256SUMS not found, skipping verification."
                   fi
