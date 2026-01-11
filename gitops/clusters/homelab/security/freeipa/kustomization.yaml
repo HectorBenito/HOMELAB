@@ -8,4 +8,4 @@ resources:
   - service-lb.yaml
   - storageclass-nfs.yaml
   - pvc-backups-nfs.yaml
-  - cronjob-backup-daily.yaml
+  - cronjob-backup.yaml
