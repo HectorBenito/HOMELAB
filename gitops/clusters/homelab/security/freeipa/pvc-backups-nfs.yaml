@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: freeipa-backups
+  namespace: freeipa
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs-freeipa
+  resources:
+    requests:
+      storage: 100Gi

@@ -4,5 +4,5 @@ resources:
   - namespace.yaml
   - helmrepository.yaml
   - helmrelease.yaml
-   # opcional: tus tests
-  - test-longhorn-pod.yaml
+  - certificate-longhorn-ui.yaml
+  - ingressroute-longhorn-ui.yaml

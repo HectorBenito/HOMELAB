@@ -6,3 +6,6 @@ resources:
   - secret.sops.yaml
   - statefulset.yaml
   - service-lb.yaml
+  - storageclass-nfs.yaml
+  - pvc-backups-nfs.yaml
+  - cronjob-backup-daily.yaml

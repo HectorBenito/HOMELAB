@@ -1,0 +1,34 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: freeipa-restore
+  namespace: freeipa
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: restore
+          image: freeipa/freeipa-server:almalinux-10
+          securityContext:
+            privileged: true
+          command: ["/bin/bash","-lc"]
+          args:
+            - |
+              set -euo pipefail
+              # CAMBIA ESTA FECHA CUANDO RESTAURES
+              DATE="2000-01-31"
+              TAR="$(ls -1 /backup/freeipa/daily/${DATE}/*.tar | head -n1)"
+
+              echo "[*] Restoring from ${TAR}..."
+              ipa-restore "${TAR}"
+
+              echo "[+] Restore completed."
+          volumeMounts:
+            - name: backup
+              mountPath: /backup
+      volumes:
+        - name: backup
+          persistentVolumeClaim:
+            claimName: freeipa-backups

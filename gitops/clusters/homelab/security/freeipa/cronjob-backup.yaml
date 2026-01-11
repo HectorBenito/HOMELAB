@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: freeipa-backup
+  namespace: freeipa
+spec:
+  schedule: "15 3 * * *"          # Diario 03:15 UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: freeipa/freeipa-server:almalinux-10
+              securityContext:
+                privileged: true
+              command: ["/bin/bash","-lc"]
+              args:
+                - |
+                  set -euo pipefail
+                  DATE="$(date -u +%Y-%m-%d)"
+                  DEST="/backup/freeipa/daily/${DATE}"
+                  mkdir -p "${DEST}"
+
+                  echo "[*] Running ipa-backup..."
+                  ipa-backup
+
+                  echo "[*] Locating latest backup tar..."
+                  LATEST="$(ls -1t /var/lib/ipa/backup/*.tar | head -n1)"
+
+                  echo "[*] Copying ${LATEST} to NFS..."
+                  cp -av "${LATEST}" "${DEST}/"
+                  sha256sum "${DEST}/"*.tar > "${DEST}/SHA256SUMS"
+
+                  echo "[*] Retention: keep last 30 daily backups..."
+                  ls -1dt /backup/freeipa/daily/* | tail -n +31 | xargs -r rm -rf
+
+                  echo "[+] Backup completed successfully."
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+          volumes:
+            - name: backup
+              persistentVolumeClaim:
+                claimName: freeipa-backups
