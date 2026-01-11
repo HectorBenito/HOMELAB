@@ -14,5 +14,6 @@ resources:
   - ./security/cloudflare/flux-kustomization.yaml
   - ./security/freeipa/flux-kustomization.yaml
   - ./security/cloudflare-tunnel/flux-kustomization.yaml
+  - ./security/authentik/flux-kustomization.yaml
   - ./security/rbac-oidc/flux-kustomization.yaml
   - ./apps/test-whoami/flux-kustomization.yaml

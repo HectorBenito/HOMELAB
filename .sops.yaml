@@ -1,0 +1,4 @@
+creation_rules:
+  - path_regex: .*secret.*\.ya?ml$
+    encrypted_regex: "^(data|stringData)$"
+    age: "age1cn34m2qxnzsjrcj3q5rl7htwqeld77fmrl002rxajk4zd2fvnssq6l0vj9"

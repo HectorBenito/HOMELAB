@@ -12,6 +12,11 @@ data:
     # loglevel: info
 
     ingress:
+    
       - hostname: whoami.nasbenito.com
-        service: http://whoami.test-whoami.svc.cluster.local:80
+        service: http://traefik.traefik.svc.cluster.local:80
+
+      - hostname: auth.nasbenito.com
+        service: http://traefik.traefik.svc.cluster.local:80
+
       - service: http_status:404
