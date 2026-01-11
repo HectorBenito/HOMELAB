@@ -7,3 +7,10 @@ resources:
   - authentik-config.secret.sops.yaml
   - helmrelease.yaml
   - ingress.yaml
+
+patches:
+  - path: patch-deployments-envfrom.yaml
+    target:
+      kind: Deployment
+      name: authentik-server|authentik-worker
+      namespace: authentik
