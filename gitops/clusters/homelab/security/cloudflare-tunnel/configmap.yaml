@@ -9,15 +9,18 @@ data:
     credentials-file: /etc/cloudflared/creds/credentials.json
 
     ingress:
-    
+      # WHOAMI (public)
       - hostname: whoami.nasbenito.com
         service: https://traefik.traefik.svc.cluster.local:443
         originRequest:
           originServerName: whoami.nasbenito.com
+          noTLSVerify: false
 
+      # AUTHENTIK (public)
       - hostname: auth.nasbenito.com
         service: https://traefik.traefik.svc.cluster.local:443
         originRequest:
           originServerName: auth.nasbenito.com
+          noTLSVerify: false
 
       - service: http_status:404

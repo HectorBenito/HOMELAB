@@ -101,5 +101,3 @@ node_modules/
 talos-nasbenito/
 /talos-nasbenito/
 /truenas/
-
-authentik-values.secret.sops.yaml.old

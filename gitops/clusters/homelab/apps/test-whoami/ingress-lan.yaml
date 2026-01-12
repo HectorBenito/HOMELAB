@@ -9,10 +9,10 @@ spec:
   ingressClassName: traefik
   tls:
     - hosts:
-        - whoami.nasbenito.com
+        - whoami.local.nasbenito.com
       secretName: whoami-tls
   rules:
-    - host: whoami.nasbenito.com
+    - host: whoami.local.nasbenito.com
       http:
         paths:
           - path: /

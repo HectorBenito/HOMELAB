@@ -4,3 +4,4 @@ resources:
   - namespace.yaml
   - deploy-svc.yaml
   - ingress.yaml
+  - ingress-lan.yaml
