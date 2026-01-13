@@ -68,7 +68,7 @@ spec:
         - name: nginx
           image: nginx:1.27-alpine
           ports:
-            - containerPort: 8080
+            - containerPort: 80
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

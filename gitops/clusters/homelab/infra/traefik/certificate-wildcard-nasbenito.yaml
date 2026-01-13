@@ -7,6 +7,7 @@ spec:
   secretName: wildcard-nasbenito-com-tls
   dnsNames:
     - "*.nasbenito.com"
+    - "*.local.nasbenito.com"
     - "nasbenito.com"
   issuerRef:
     kind: ClusterIssuer
