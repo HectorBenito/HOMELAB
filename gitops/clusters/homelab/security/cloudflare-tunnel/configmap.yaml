@@ -23,4 +23,4 @@ data:
           originServerName: auth.nasbenito.com
           noTLSVerify: false
 
-      - service: http_status:404
+      - service: http://traefik.traefik.svc.cluster.local:80
