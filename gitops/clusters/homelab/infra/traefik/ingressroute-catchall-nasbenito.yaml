@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: HostRegexp(`{any:.+}.nasbenito.com`) && PathPrefix(`/`)
+    - match: (HostRegexp(`{any:.+}.nasbenito.com`) || HostRegexp(`{any:.+}.local.nasbenito.com`)) && PathPrefix(`/`)
       kind: Rule
       priority: 1
       services:
