@@ -4,3 +4,7 @@ resources:
   - namespace.yaml
   - helmrepository.yaml
   - helmrelease.yaml
+  - tlsstore-traefik.yaml
+  - certificate-wildcard-nasbenito.yaml
+  - default-404.yaml
+  - ingressroute-catchall-nasbenito.yaml

@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-nasbenito-com
+  namespace: traefik
+spec:
+  secretName: wildcard-nasbenito-com-tls
+  dnsNames:
+    - "*.nasbenito.com"
+    - "nasbenito.com"
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns01
