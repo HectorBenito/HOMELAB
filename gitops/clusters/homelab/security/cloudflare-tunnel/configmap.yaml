@@ -23,4 +23,10 @@ data:
           originServerName: auth.nasbenito.com
           noTLSVerify: false
 
-      - service: http://traefik.traefik.svc.cluster.local:80
+      # Default catch-all rule to return 404 for undefined hosts
+      - hostname: "*.nasbenito.com"
+        service: https://192.168.110.242:443
+        originRequest:
+          noTLSVerify: false
+
+      - service: http_status:404

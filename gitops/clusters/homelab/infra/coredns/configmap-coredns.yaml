@@ -13,6 +13,13 @@ data:
         cache 30
     }
 
+    nasbenito.com:53 {
+        errors
+        log
+        file /etc/coredns/nasbenito.com.db
+        cache 30
+    }
+
     # Resto de dominios (recursivo hacia fuera)
     .:53 {
         errors
@@ -41,6 +48,33 @@ data:
     )
 
     @           IN NS ns.local.nasbenito.com.
+
+    ; El propio DNS (opcional)
+    ns          IN A 192.168.110.243
+
+    ; Traefik (MetalLB LAN)
+    traefik     IN A 192.168.110.242
+    whoami      IN A 192.168.110.242
+    kube        IN A 192.168.110.242
+    auth        IN A 192.168.110.242
+    ipa         IN A 192.168.110.249
+
+    ; Wildcard para servicios internos
+    *           IN A 192.168.110.242
+
+  nasbenito.com.db: |
+    $ORIGIN nasbenito.com.
+    $TTL 60
+
+    @   IN SOA ns.nasbenito.com. hostmaster.nasbenito.com. (
+            2026010701 ; serial
+            3600       ; refresh
+            600        ; retry
+            86400      ; expire
+            60         ; minimum
+    )
+
+    @           IN NS ns.nasbenito.com.
 
     ; El propio DNS (opcional)
     ns          IN A 192.168.110.243
