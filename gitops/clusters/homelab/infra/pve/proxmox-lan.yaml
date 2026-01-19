@@ -1,3 +1,4 @@
+# 1. El Transport para saltarse el SSL (Asegúrate de que no tenga campos extra)
 apiVersion: traefik.io/v1alpha1
 kind: ServersTransport
 metadata:
@@ -7,13 +8,14 @@ spec:
   insecureSkipVerify: true
   disableHTTP2: true
 ---
+# 2. Los Services y Endpoints (Sin Selectores)
 apiVersion: v1
 kind: Service
 metadata:
   name: pve1-svc
   namespace: traefik
 spec:
-  ports: [{name: https, port: 443, targetPort: 8006}]
+  ports: [{name: https, port: 8006, targetPort: 8006}]
 ---
 apiVersion: v1
 kind: Endpoints
@@ -22,7 +24,7 @@ metadata:
   namespace: traefik
 subsets:
   - addresses: [{ip: "192.168.110.11"}]
-    ports: [{port: 8006}]
+    ports: [{port: 8006, name: https}]
 ---
 apiVersion: v1
 kind: Service
@@ -30,7 +32,7 @@ metadata:
   name: pve2-svc
   namespace: traefik
 spec:
-  ports: [{name: https, port: 443, targetPort: 8006}]
+  ports: [{name: https, port: 8006, targetPort: 8006}]
 ---
 apiVersion: v1
 kind: Endpoints
@@ -39,7 +41,7 @@ metadata:
   namespace: traefik
 subsets:
   - addresses: [{ip: "192.168.110.12"}]
-    ports: [{port: 8006}]
+    ports: [{port: 8006, name: https}]
 ---
 apiVersion: v1
 kind: Service
@@ -47,7 +49,7 @@ metadata:
   name: pve3-svc
   namespace: traefik
 spec:
-  ports: [{name: https, port: 443, targetPort: 8006}]
+  ports: [{name: https, port: 8006, targetPort: 8006}]
 ---
 apiVersion: v1
 kind: Endpoints
@@ -56,8 +58,9 @@ metadata:
   namespace: traefik
 subsets:
   - addresses: [{ip: "192.168.110.13"}]
-    ports: [{port: 8006}]
+    ports: [{port: 8006, name: https}]
 ---
+# 3. El Ingress con la corrección de Scheme y Transport
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -66,14 +69,16 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
+    # ESTO EVITA EL 503: Indica que el backend es HTTPS
     traefik.ingress.kubernetes.io/service.serversscheme: https
+    # ESTO EVITA EL 500: Vincula el skip-verify
     traefik.ingress.kubernetes.io/service.serverstransport: traefik-proxmox-lan-transport@kubernetescrd
 spec:
   ingressClassName: traefik
   tls:
     - hosts:
         - "*.local.nasbenito.com"
-      secretName: wildcard-local-nasbenito-com-tls
+      secretName: wildcard-local-tls
   rules:
   - host: pve1.local.nasbenito.com
     http:
@@ -83,7 +88,7 @@ spec:
         backend:
           service:
             name: pve1-svc
-            port: {number: 443}
+            port: {number: 8006}
   - host: pve2.local.nasbenito.com
     http:
       paths:
@@ -92,7 +97,7 @@ spec:
         backend:
           service:
             name: pve2-svc
-            port: {number: 443}
+            port: {number: 8006}
   - host: pve3.local.nasbenito.com
     http:
       paths:
@@ -101,4 +106,4 @@ spec:
         backend:
           service:
             name: pve3-svc
-            port: {number: 443}
+            port: {number: 8006}
