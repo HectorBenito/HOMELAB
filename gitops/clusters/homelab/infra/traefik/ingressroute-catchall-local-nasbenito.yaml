@@ -1,17 +1,17 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: catchall-nasbenito
+  name: catchall-local-nasbenito
   namespace: traefik
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: HostRegexp(`{any:.+}.nasbenito.com`) && PathPrefix(`/`)
+    - match: HostRegexp(`{any:.+}.local.nasbenito.com`) && PathPrefix(`/`)
       kind: Rule
       priority: 1
       services:
         - name: default-404
           port: 80
   tls:
-    secretName: wildcard-nasbenito-com-tls
+    secretName: wildcard-local-nasbenito-com-tls
