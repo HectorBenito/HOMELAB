@@ -58,7 +58,6 @@ data:
     kube        IN A 192.168.110.242
     auth        IN A 192.168.110.242
     ipa         IN A 192.168.110.249
-    default404test IN A 192.168.110.242
 
     ; Wildcard para servicios internos
     *           IN A 192.168.110.242

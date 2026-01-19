@@ -6,5 +6,7 @@ resources:
   - helmrelease.yaml
   - tlsstore-traefik.yaml
   - certificate-wildcard-nasbenito.yaml
+  - certificate-wildcard-local-nasbenito.yaml
   - default-404.yaml
   - ingressroute-catchall-nasbenito.yaml
+  - ingressroute-catchall-local-nasbenito.yaml
