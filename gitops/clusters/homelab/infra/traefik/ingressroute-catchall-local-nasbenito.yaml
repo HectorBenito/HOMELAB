@@ -9,10 +9,10 @@ spec:
   routes:
     - match: Host(`*.local.nasbenito.com`) && PathPrefix(`/`)
       kind: Rule
-      priority: 10
+      priority: 1
       services:
         - name: default-404
-          port: 80
+          port: http
   tls:
     secretName: wildcard-local-nasbenito-com-tls
     domains:
