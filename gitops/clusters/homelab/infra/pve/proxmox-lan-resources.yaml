@@ -5,8 +5,7 @@ metadata:
   namespace: traefik
 spec:
   insecureSkipVerify: true
-  disableHTTP2: true     
-  peerCertSubstitution: true
+  disableHTTP2: true
 ---
 # --- Nodo PVE1 ---
 apiVersion: v1
