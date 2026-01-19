@@ -11,7 +11,7 @@ spec:
       kind: Rule
       priority: 1
       services:
-        - name: default-404
+        - name: default-404.traefik.svc.cluster.local
           port: http
   tls:
     secretName: wildcard-local-nasbenito-com-tls
