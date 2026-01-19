@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloudkvm
+---
+# 1. Base de Datos (Postgres) - Almacenamiento de config
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudkvm-db
+  namespace: cloudkvm
+spec:
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15-alpine
+        env:
+        - name: POSTGRES_DB
+          value: cloudkvm
+        - name: POSTGRES_USER
+          value: kvmuser
+        - name: POSTGRES_PASSWORD
+          value: kvmpass # Cámbiala si quieres, pero es local
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-svc
+  namespace: cloudkvm
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: db
+---
+# 2. Cache (Redis) - Necesario para el tiempo real
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudkvm-redis
+  namespace: cloudkvm
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-svc
+  namespace: cloudkvm
+spec:
+  ports:
+    - port: 6379
+  selector:
+    app: redis
+---
+# 3. El Servidor CloudKVM
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudkvm-app
+  namespace: cloudkvm
+spec:
+  selector:
+    matchLabels:
+      app: cloudkvm
+  template:
+    metadata:
+      labels:
+        app: cloudkvm
+    spec:
+      containers:
+      - name: app
+        image: jetkvm/cloudkvm:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DATABASE_URL
+          value: "postgres://kvmuser:kvmpass@db-svc:5432/cloudkvm"
+        - name: REDIS_URL
+          value: "redis://redis-svc:6379"
+        # URL local para que el dashboard sepa dónde está
+        - name: APP_URL
+          value: "https://kvm.local.nasbenito.com"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloudkvm-svc
+  namespace: cloudkvm
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: cloudkvm
+---
+# 4. Acceso vía Traefik (Tu IngressRoute ganador)
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cloudkvm-route
+  namespace: cloudkvm
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`kvm.local.nasbenito.com`)
+    kind: Rule
+    services:
+    - name: cloudkvm-svc
+      port: 8080
+  tls:
+    secretName: wildcard-local-nasbenito-com-tls
