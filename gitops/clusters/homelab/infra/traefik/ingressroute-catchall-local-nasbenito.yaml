@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: catchall-local-nasbenito-standard
+  name: catchall-local-nasbenito
   namespace: traefik
   annotations:
     traefik.ingress.kubernetes.io/router.priority: "1"
