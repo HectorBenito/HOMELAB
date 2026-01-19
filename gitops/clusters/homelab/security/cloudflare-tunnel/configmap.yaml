@@ -25,6 +25,9 @@ data:
 
       # Default catch-all rule to return 404 for undefined hosts
       - hostname: "*.nasbenito.com"
-        service: https://traefik.traefik.svc.cluster.local:80
+        service: https://traefik.traefik.svc.cluster.local:443
+        originRequest:
+          noTLSVerify: true 
+          http2Origin: true
 
       - service: http_status:404
