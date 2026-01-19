@@ -59,47 +59,32 @@ subsets:
   - addresses: [{ip: "192.168.110.13"}]
     ports: [{port: 8006, name: https}]
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
 metadata:
-  name: proxmox-lan-ingress
+  name: proxmox-lan-route
   namespace: traefik
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/service.serversscheme: https
-    traefik.ingress.kubernetes.io/service.serverstransport: traefik-proxmox-lan-transport@kubernetescrd
 spec:
-  ingressClassName: traefik
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`pve1.local.nasbenito.com`)
+    kind: Rule
+    services:
+    - name: pve1-svc
+      port: 8006
+      serversTransport: proxmox-lan-transport
+  - match: Host(`pve2.local.nasbenito.com`)
+    kind: Rule
+    services:
+    - name: pve2-svc
+      port: 8006
+      serversTransport: proxmox-lan-transport
+  - match: Host(`pve3.local.nasbenito.com`)
+    kind: Rule
+    services:
+    - name: pve3-svc
+      port: 8006
+      serversTransport: proxmox-lan-transport
   tls:
-    - hosts:
-        - "*.local.nasbenito.com"
-      secretName: wildcard-local-nasbenito-com-tls
-  rules:
-  - host: pve1.local.nasbenito.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: pve1-svc
-            port: {number: 8006}
-  - host: pve2.local.nasbenito.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: pve2-svc
-            port: {number: 8006}
-  - host: pve3.local.nasbenito.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: pve3-svc
-            port: {number: 8006}
+    secretName: wildcard-local-nasbenito-com-tls
