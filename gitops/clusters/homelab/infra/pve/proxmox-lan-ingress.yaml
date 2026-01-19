@@ -7,7 +7,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/service.serversscheme: https
-    traefik.ingress.kubernetes.io/service.serverstransport: proxmox-lan-transport@kubernetescrd
+    traefik.ingress.kubernetes.io/service.serverstransport: traefik-proxmox-lan-transport@kubernetescrd
 spec:
   ingressClassName: traefik
   rules:
