@@ -9,7 +9,7 @@ spec:
   routes:
     - match: HostRegexp(`{a:[^.]+}.local.nasbenito.com`) && PathPrefix(`/`)
       kind: Rule
-      priority: 1
+      priority: 10
       services:
         - name: default-404
           port: 80
