@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: HostRegexp(`{a:[^.]+}.local.nasbenito.com`) && PathPrefix(`/`)
+    - match: - match: Host(`*.local.nasbenito.com`) && PathPrefix(`/`)
       kind: Rule
       priority: 10
       services:
@@ -15,3 +15,5 @@ spec:
           port: 80
   tls:
     secretName: wildcard-local-nasbenito-com-tls
+    domains:
+      - main: "*.local.nasbenito.com"
