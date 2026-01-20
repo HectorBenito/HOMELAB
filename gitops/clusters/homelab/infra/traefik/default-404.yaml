@@ -22,6 +22,7 @@ data:
     <head>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAADI0lEQVR4nO1Zv08VQRD+sPGs0ERsn8TDhlKUQqXXB41SKFAqhPKJCe11QsTXSqjBwqd/AQWRvAj0QuGj0L9AAib8sMBsMpeM497+eOzduyhfMuHymNmZ725md3YXOEe5cQXAKIAXAGYLlhr5vtxO4NcALAE4AXDaYTkBsAigxzX4fgDfSxD4qZBvFJv1zcvgNwDUAcwVLHXyLUkYv8QSU/4B4AE6j4cA9lhcb00Fy3M+VPAxTQLqb4oLACZIuiy6ClUW1zGAbp2jUZE2obBLY35lv00wX+MW3RRbzOaRztEMU1gISKDlQaBlIPCG2aiv9BcSpqCeQyGmOf0G+62LAh/TpJDUdY4vLwKhkPgQWO3AyjtrkVUfAmWX5J8n0OzAyjtnkeZ/VcQJyoekLAQiAEO0DtRI1PN9+l9pCYwA+ADgp6E4DwA0AAyXicCgKEBXWQdw26H9yJXANIBfmuC2ASxTz1+n522NnuqOpyztR24EXotgDqlJlK0yR0xN26GwnYcDQhKYFgF8BlDxsK9odmOTRREYFBuj9wAuavSyNjUpIiponk4DRRBoijefNTVai5JsN5nep7wJjIicrwTwdx3AEdOt5kngIxtDFbEJPv74bqwRYkAdLolFqi8ggVgsdlEeBIaY/RcHfV9/fJ24F2JAiXFmv+Kg7+vvHdN/GmJAiZce+d+OvwWmPxNiwLMey/j6y/1YZYzZq89tg8s6kJVCT/IuYlVwNlibM4GdvItYtQv7bIybCIe4iGkUtGFxrQMV1C6JqUMFtdy8t0JeBIY9Wgle9NqiJPSKViLz1DzU4e46G2fD0Mypt96ig1zdWSjIlp9Kr5kcPxaO28Ud0U43LJv1LEQiJdW9wK1MbboN5I7VzUi7mBKbkU3qKl3RK968kucuhovMYM/UujpgXgRwRIuRqcnro4LlOa/klavTHrpI48ZbNKjrKTLfYU1mXNXuUL9UJ1kR8zxPm2e+b65fQ8JX+Mo6QDsp3zHWbDlvwlW6DTwOQCBFlQr6wGC3T/P8WervD3TThVrN4xTZ1hpE1AoovfRoUbXHdzM2/+dAmfEba0TDz547cMcAAAAASUVORK5CYII=">
       <title>404 — No encontrado</title>
       <style>
         :root { color-scheme: dark light; }
