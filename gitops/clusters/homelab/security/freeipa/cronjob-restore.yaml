@@ -5,7 +5,7 @@ metadata:
   namespace: freeipa
 spec:
   suspend: true
-  schedule: "0 0 31 2 *" 
+  schedule: "0 0 31 2 *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 3
@@ -26,93 +26,83 @@ spec:
               image: bitnami/kubectl:latest
               command: ["/bin/sh","-lc"]
               env:
-                # Opcional: fija la fecha del backup a restaurar
                 - name: BACKUP_DATE
                   value: ""
-                # Opcional: fija el archivo exacto dentro de esa fecha
                 - name: BACKUP_FILE
                   value: ""
-                # Directory Manager password para ipa-restore (unattended)
                 - name: DM_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       name: freeipa-bootstrap
                       key: IPA_DM_PASSWORD
               args:
-            - |
-              set -euo pipefail
+                - |
+                  set -euo pipefail
 
-              echo "[!] FREEIPA RESTORE (DESTRUCTIVE)"
-              echo "[!] This will overwrite FreeIPA state."
-              echo
+                  echo "[!] FREEIPA RESTORE (DESTRUCTIVE)"
+                  echo "[!] This will overwrite FreeIPA state."
+                  echo "[!] Ensure you REALLY want to restore."
+                  echo
 
-              echo "[*] Waiting for freeipa-0 pod to exist..."
-              until kubectl -n freeipa get pod freeipa-0 >/dev/null 2>&1; do
-                sleep 5
-              done
+                  # 1) Selección del backup
+                  if [ -n "${BACKUP_DATE}" ]; then
+                    SRC_DIR="/backup/freeipa/daily/${BACKUP_DATE}"
+                  else
+                    SRC_DIR="$(ls -1dt /backup/freeipa/daily/* 2>/dev/null | head -n1 || true)"
+                  fi
 
-              echo "[*] Waiting for freeipa-0 Ready..."
-              kubectl -n freeipa wait --for=condition=Ready pod/freeipa-0 --timeout=20m
+                  if [ -z "${SRC_DIR}" ] || [ ! -d "${SRC_DIR}" ]; then
+                    echo "[ERROR] Backup directory not found. SRC_DIR=${SRC_DIR}"
+                    exit 1
+                  fi
 
-              # 1) Selección del backup
-              if [ -n "${BACKUP_DATE}" ]; then
-                SRC_DIR="/backup/freeipa/daily/${BACKUP_DATE}"
-              else
-                SRC_DIR="$(ls -1dt /backup/freeipa/daily/* 2>/dev/null | head -n1 || true)"
-              fi
+                  if [ -n "${BACKUP_FILE}" ]; then
+                    SRC_FILE="${SRC_DIR}/${BACKUP_FILE}"
+                  else
+                    SRC_FILE="$(ls -1t "${SRC_DIR}"/freeipa-backup-*.tar.gz 2>/dev/null | head -n1 || true)"
+                  fi
 
-              if [ -z "${SRC_DIR}" ] || [ ! -d "${SRC_DIR}" ]; then
-                echo "[ERROR] Backup directory not found. SRC_DIR=${SRC_DIR}"
-                exit 1
-              fi
+                  if [ -z "${SRC_FILE}" ] || [ ! -f "${SRC_FILE}" ]; then
+                    echo "[ERROR] Backup file not found. SRC_FILE=${SRC_FILE}"
+                    ls -lah "${SRC_DIR}" || true
+                    exit 1
+                  fi
 
-              if [ -n "${BACKUP_FILE}" ]; then
-                SRC_FILE="${SRC_DIR}/${BACKUP_FILE}"
-              else
-                SRC_FILE="$(ls -1t "${SRC_DIR}"/freeipa-backup-*.tar.gz 2>/dev/null | head -n1 || true)"
-              fi
+                  echo "[*] Selected backup:"
+                  echo "    dir : ${SRC_DIR}"
+                  echo "    file: ${SRC_FILE}"
 
-              if [ -z "${SRC_FILE}" ] || [ ! -f "${SRC_FILE}" ]; then
-                echo "[ERROR] Backup file not found. SRC_FILE=${SRC_FILE}"
-                ls -lah "${SRC_DIR}" || true
-                exit 1
-              fi
+                  # 2) Checksum
+                  if [ -f "${SRC_DIR}/SHA256SUMS" ]; then
+                    echo "[*] Verifying checksum for selected file..."
+                    ( cd "${SRC_DIR}" && sha256sum -c SHA256SUMS | grep -F "$(basename "${SRC_FILE}")" | grep -q "OK$" )
+                    echo "    checksum: OK"
+                  else
+                    echo "[WARN] SHA256SUMS not found, skipping verification."
+                  fi
 
-              echo "[*] Selected backup:"
-              echo "    dir : ${SRC_DIR}"
-              echo "    file: ${SRC_FILE}"
+                  # 3) Extraer en freeipa-0 (staging)
+                  STAGE="/var/lib/ipa/backup/restore-stage"
+                  echo "[*] Preparing stage on freeipa-0: ${STAGE}"
+                  kubectl -n freeipa exec freeipa-0 -- bash -lc "rm -rf '${STAGE}' && mkdir -p '${STAGE}'"
 
-              # 2) Checksum (si existe SHA256SUMS) - estricto
-              if [ -f "${SRC_DIR}/SHA256SUMS" ]; then
-                echo "[*] Verifying checksum for selected file..."
-                ( cd "${SRC_DIR}" && sha256sum -c SHA256SUMS | grep -F "$(basename "${SRC_FILE}")" | grep -q "OK$" )
-                echo "    checksum: OK"
-              else
-                echo "[WARN] SHA256SUMS not found, skipping verification."
-              fi
+                  echo "[*] Extracting archive into freeipa-0 stage (streaming)..."
+                  gzip -dc "${SRC_FILE}" | kubectl -n freeipa exec -i freeipa-0 -- bash -lc "tar -C '${STAGE}' -xf -"
 
-              # 3) Extraer en freeipa-0 (staging)
-              STAGE="/var/lib/ipa/backup/restore-stage"
-              echo "[*] Preparing stage on freeipa-0: ${STAGE}"
-              kubectl -n freeipa exec freeipa-0 -- bash -lc "rm -rf '${STAGE}' && mkdir -p '${STAGE}'"
+                  echo "[*] Looking for extracted ipa-full-* directory..."
+                  FULL_DIR="$(kubectl -n freeipa exec freeipa-0 -- bash -lc "ls -1dt '${STAGE}'/ipa-full-* 2>/dev/null | head -n1" || true)"
+                  if [ -z "${FULL_DIR}" ]; then
+                    echo "[ERROR] Could not find ipa-full-* after extraction in ${STAGE}"
+                    kubectl -n freeipa exec freeipa-0 -- bash -lc "ls -lah '${STAGE}' || true"
+                    exit 1
+                  fi
+                  echo "    full dir: ${FULL_DIR}"
 
-              echo "[*] Extracting archive into freeipa-0 stage (streaming)..."
-              gzip -dc "${SRC_FILE}" | kubectl -n freeipa exec -i freeipa-0 -- bash -lc "tar -C '${STAGE}' -xf -"
+                  # 4) Restore con password explícito (no stdin)
+                  echo "[*] Running ipa-restore (unattended)..."
+                  kubectl -n freeipa exec freeipa-0 -- bash -lc "set -e; ipa-restore -U --password \"${DM_PASSWORD}\" \"${FULL_DIR}\""
 
-              echo "[*] Looking for extracted ipa-full-* directory..."
-              FULL_DIR="$(kubectl -n freeipa exec freeipa-0 -- bash -lc "ls -1dt '${STAGE}'/ipa-full-* 2>/dev/null | head -n1" || true)"
-              if [ -z "${FULL_DIR}" ]; then
-                echo "[ERROR] Could not find ipa-full-* after extraction in ${STAGE}"
-                kubectl -n freeipa exec freeipa-0 -- bash -lc "ls -lah '${STAGE}' || true"
-                exit 1
-              fi
-              echo "    full dir: ${FULL_DIR}"
-
-              # 4) Restore (la clave: -p/--password, NO stdin)
-              echo "[*] Running ipa-restore (unattended)..."
-              kubectl -n freeipa exec freeipa-0 -- bash -lc "set -e; ipa-restore -U --password '${DM_PASSWORD}' '${FULL_DIR}'"
-
-              echo "[+] Restore completed."
+                  echo "[+] Restore completed."
               volumeMounts:
                 - name: backup
                   mountPath: /backup
