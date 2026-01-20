@@ -62,6 +62,7 @@ data:
     pve2        IN A 192.168.110.242
     pve3        IN A 192.168.110.242
     kvm         IN A 192.168.110.242
+    omada       IN A 192.168.110.242
 
     ; Wildcard para servicios internos
     *           IN A 192.168.110.242
