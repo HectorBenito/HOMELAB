@@ -1,0 +1,128 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: authentik-postgres-backup
+  namespace: authentik
+spec:
+  schedule: "15 3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: backup
+              image: bitnami/postgresql:16
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                capabilities:
+                  drop: ["ALL"]
+              command: ["/bin/bash","-lc"]
+              args:
+                - |
+                  set -euo pipefail
+
+                  TS="$(date -u +%Y%m%dT%H%M%SZ)"
+                  DATE="$(date -u +%Y-%m-%d)"
+                  MONTH="$(date -u +%Y-%m)"
+
+                  BASE="/backup/authentik"
+                  DEST="${BASE}/daily/${DATE}"
+                  mkdir -p "${DEST}"
+
+                  OUT="${DEST}/authentik-pg-${TS}.sql.gz"
+
+                  echo "[*] Dumping PostgreSQL from ${PGHOST}:${PGPORT}/${PGDATABASE} as ${PGUSER}"
+                  pg_dump | gzip -9 > "${OUT}"
+
+                  echo "[*] Verifying gzip..."
+                  gzip -t "${OUT}"
+
+                  echo "[*] Checksums..."
+                  ( cd "${DEST}" && sha256sum "authentik-pg-${TS}.sql.gz" >> SHA256SUMS )
+
+                  # -----------------------------
+                  # Rotation + Retention Policy
+                  # -----------------------------
+                  KEEP_DAILY=30
+                  KEEP_WEEKLY=12
+                  KEEP_MONTHLY=12
+
+                  mkdir -p "${BASE}/daily" "${BASE}/weekly" "${BASE}/monthly"
+
+                  echo "[*] Rotation: weekly on Mondays, monthly on day 1 (copy daily folder)..."
+                  DOW="$(date -u +%u)"  # 1=Mon .. 7=Sun (UTC)
+                  DOM="$(date -u +%d)"  # 01..31 (UTC)
+
+                  # Weekly rotation (Monday): copy today's daily folder into weekly/<DATE> if not exists
+                  if [ "${DOW}" -eq 1 ]; then
+                    if [ ! -d "${BASE}/weekly/${DATE}" ]; then
+                      echo "    -> weekly: creating ${BASE}/weekly/${DATE}"
+                      cp -a "${DEST}" "${BASE}/weekly/${DATE}"
+                    else
+                      echo "    -> weekly: already exists ${BASE}/weekly/${DATE} (skip)"
+                    fi
+                  fi
+
+                  # Monthly rotation (day 1): copy today's daily folder into monthly/<YYYY-MM> if not exists
+                  if [ "${DOM}" -eq 1 ]; then
+                    if [ ! -d "${BASE}/monthly/${MONTH}" ]; then
+                      echo "    -> monthly: creating ${BASE}/monthly/${MONTH}"
+                      cp -a "${DEST}" "${BASE}/monthly/${MONTH}"
+                    else
+                      echo "    -> monthly: already exists ${BASE}/monthly/${MONTH} (skip)"
+                    fi
+                  fi
+
+                  echo "[*] Retention: keep last ${KEEP_DAILY} daily backups..."
+                  ls -1dt "${BASE}/daily"/* 2>/dev/null | tail -n +"$((KEEP_DAILY+1))" | xargs -r rm -rf
+
+                  echo "[*] Retention: keep last ${KEEP_WEEKLY} weekly backups..."
+                  ls -1dt "${BASE}/weekly"/* 2>/dev/null | tail -n +"$((KEEP_WEEKLY+1))" | xargs -r rm -rf
+
+                  echo "[*] Retention: keep last ${KEEP_MONTHLY} monthly backups..."
+                  ls -1dt "${BASE}/monthly"/* 2>/dev/null | tail -n +"$((KEEP_MONTHLY+1))" | xargs -r rm -rf
+
+                  echo "[+] Done. Listing ${DEST}:"
+                  ls -lah "${DEST}" | tail -n +1
+              env:
+                - name: PGHOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: authentik
+                      key: AUTHENTIK_POSTGRESQL__HOST
+                - name: PGPORT
+                  valueFrom:
+                    secretKeyRef:
+                      name: authentik
+                      key: AUTHENTIK_POSTGRESQL__PORT
+                - name: PGDATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      name: authentik
+                      key: AUTHENTIK_POSTGRESQL__NAME
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      name: authentik
+                      key: AUTHENTIK_POSTGRESQL__USER
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: authentik
+                      key: AUTHENTIK_POSTGRESQL__PASSWORD
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+          volumes:
+            - name: backup
+              persistentVolumeClaim:
+                claimName: authentik-backups

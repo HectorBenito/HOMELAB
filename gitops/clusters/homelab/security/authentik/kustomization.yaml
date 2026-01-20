@@ -6,3 +6,6 @@ resources:
   - authentik-values.secret.sops.yaml
   - helmrelease.yaml
   - ingress.yaml
+  - storageclass-nfs.yaml
+  - pvc-backups.yaml
+  - authentik-postgres-backup.yaml
