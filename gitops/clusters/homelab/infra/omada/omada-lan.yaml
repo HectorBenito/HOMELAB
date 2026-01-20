@@ -1,0 +1,49 @@
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: omada-transport
+  namespace: traefik
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: omada-svc
+  namespace: traefik
+spec:
+  ports:
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 443
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: omada-svc
+  namespace: traefik
+subsets:
+  - addresses:
+      - ip: 192.168.1.1
+    ports:
+      - port: 443
+        name: https
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: omada-lan-route
+  namespace: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`omada.local.nasbenito.com`)
+    kind: Rule
+    services:
+    - name: omada-svc
+      port: 443
+      serversTransport: omada-transport
+  tls:
+    secretName: wildcard-local-nasbenito-com-tls
