@@ -13,41 +13,50 @@ spec:
       backoffLimit: 1
       template:
         spec:
+          serviceAccountName: authentik-backup
           restartPolicy: OnFailure
           securityContext:
-            seccompProfile:
-              type: RuntimeDefault
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: "OnRootMismatch"
           containers:
             - name: backup
               image: postgres:16-alpine
               securityContext:
                 allowPrivilegeEscalation: false
                 runAsNonRoot: true
+                runAsUser: 568
+                runAsGroup: 568
                 capabilities:
                   drop: ["ALL"]
               command: ["/bin/sh","-lc"]
               args:
                 - |
-                  set -euo pipefail
+                  set -eu
+                  set -o pipefail
 
                   TS="$(date -u +%Y%m%dT%H%M%SZ)"
                   DATE="$(date -u +%Y-%m-%d)"
                   MONTH="$(date -u +%Y-%m)"
 
-                  BASE="/backup/authentik"
+                  BASE="/backup"
                   DEST="${BASE}/daily/${DATE}"
                   mkdir -p "${DEST}"
 
-                  OUT="${DEST}/authentik-pg-${TS}.sql.gz"
-
+                  OUT="${DEST}/authentik-pg-${TS}.dump"
                   echo "[*] Dumping PostgreSQL from ${PGHOST}:${PGPORT}/${PGDATABASE} as ${PGUSER}"
-                  pg_dump | gzip -9 > "${OUT}"
+                  pg_dump -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d "${PGDATABASE}" \
+                    --format=custom \
+                    --no-owner --no-acl \
+                    > "${OUT}"
 
-                  echo "[*] Verifying gzip..."
-                  gzip -t "${OUT}"
+                  echo "[*] Archiving Authentik Directory Data..."
+                  OUT_DATA="${DEST}/authentik-data-${TS}.tar.gz"
+                  tar -czf "${OUT_DATA}" -C /data media certs
 
                   echo "[*] Checksums..."
-                  ( cd "${DEST}" && sha256sum "authentik-pg-${TS}.sql.gz" >> SHA256SUMS )
+                  ( cd "${DEST}" && sha256sum "authentik-pg-${TS}.dump" "authentik-data-${TS}.tar.gz" >> SHA256SUMS )
 
                   # -----------------------------
                   # Rotation + Retention Policy
@@ -62,7 +71,6 @@ spec:
                   DOW="$(date -u +%u)"  # 1=Mon .. 7=Sun (UTC)
                   DOM="$(date -u +%d)"  # 01..31 (UTC)
 
-                  # Weekly rotation (Monday): copy today's daily folder into weekly/<DATE> if not exists
                   if [ "${DOW}" -eq 1 ]; then
                     if [ ! -d "${BASE}/weekly/${DATE}" ]; then
                       echo "    -> weekly: creating ${BASE}/weekly/${DATE}"
@@ -72,7 +80,6 @@ spec:
                     fi
                   fi
 
-                  # Monthly rotation (day 1): copy today's daily folder into monthly/<YYYY-MM> if not exists
                   if [ "${DOM}" -eq 1 ]; then
                     if [ ! -d "${BASE}/monthly/${MONTH}" ]; then
                       echo "    -> monthly: creating ${BASE}/monthly/${MONTH}"
