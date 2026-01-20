@@ -56,8 +56,6 @@ data:
     traefik     IN A 192.168.110.242
     whoami      IN A 192.168.110.242
     kube        IN A 192.168.110.242
-    auth        IN A 192.168.110.242
-    ipa         IN A 192.168.110.249
     pve1        IN A 192.168.110.242
     pve2        IN A 192.168.110.242
     pve3        IN A 192.168.110.242
@@ -89,7 +87,6 @@ data:
     whoami      IN A 192.168.110.242
     kube        IN A 192.168.110.242
     auth        IN A 192.168.110.242
-    ipa         IN A 192.168.110.249
 
     ; Wildcard para servicios internos
     *           IN A 192.168.110.242

@@ -13,11 +13,11 @@ resources:
   - ./infra/pve/flux-kustomization.yaml
   - ./infra/truenas/flux-kustomization.yaml
   - ./infra/omada/flux-kustomization.yaml
-  - ./infra/jetkvm-cloud/flux-kustomization.yaml
+  #- ./infra/jetkvm-cloud/flux-kustomization.yaml
   - ./security/cert-manager-issuers/flux-kustomization.yaml
   - ./security/cloudflare/flux-kustomization.yaml
-  - ./security/freeipa/flux-kustomization.yaml
+  #- ./security/freeipa/flux-kustomization.yaml
   - ./security/cloudflare-tunnel/flux-kustomization.yaml
   - ./security/authentik/flux-kustomization.yaml
-  - ./security/rbac-oidc/flux-kustomization.yaml
+  #- ./security/rbac-oidc/flux-kustomization.yaml
   - ./apps/test-whoami/flux-kustomization.yaml
