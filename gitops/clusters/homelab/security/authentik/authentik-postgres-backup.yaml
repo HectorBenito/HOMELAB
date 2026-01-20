@@ -44,6 +44,9 @@ spec:
                   DEST="${BASE}/daily/${DATE}"
                   mkdir -p "${DEST}"
 
+                  # -----------------------------
+                  # 1) PostgreSQL dump
+                  # -----------------------------
                   OUT="${DEST}/authentik-pg-${TS}.dump"
                   echo "[*] Dumping PostgreSQL from ${PGHOST}:${PGPORT}/${PGDATABASE} as ${PGUSER}"
                   pg_dump -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d "${PGDATABASE}" \
@@ -51,12 +54,23 @@ spec:
                     --no-owner --no-acl \
                     > "${OUT}"
 
-                  echo "[*] Archiving Authentik Directory Data..."
-                  OUT_DATA="${DEST}/authentik-data-${TS}.tar.gz"
-                  tar -czf "${OUT_DATA}" -C /data media certs
+                  # -----------------------------
+                  # 2) /media archive
+                  # -----------------------------
+                  echo "[*] Archiving /media..."
+                  OUT_MEDIA="${DEST}/authentik-media-${TS}.tar.gz"
 
+                  # Si /media está vacío, tar igualmente crea el archivo (válido)
+                  tar -C /media -czf "${OUT_MEDIA}" .
+
+                  echo "[*] Verifying media archive..."
+                  tar -tzf "${OUT_MEDIA}" >/dev/null
+
+                  # -----------------------------
+                  # Checksums
+                  # -----------------------------
                   echo "[*] Checksums..."
-                  ( cd "${DEST}" && sha256sum "authentik-pg-${TS}.dump" "authentik-data-${TS}.tar.gz" >> SHA256SUMS )
+                  ( cd "${DEST}" && sha256sum "authentik-pg-${TS}.dump" "authentik-media-${TS}.tar.gz" >> SHA256SUMS )
 
                   # -----------------------------
                   # Rotation + Retention Policy
@@ -129,7 +143,13 @@ spec:
               volumeMounts:
                 - name: backup
                   mountPath: /backup
+                - name: media
+                  mountPath: /media
+                  readOnly: true
           volumes:
             - name: backup
               persistentVolumeClaim:
                 claimName: authentik-backups
+            - name: media
+              persistentVolumeClaim:
+                claimName: authentik-media

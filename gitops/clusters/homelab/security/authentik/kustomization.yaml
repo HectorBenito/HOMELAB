@@ -8,4 +8,5 @@ resources:
   - ingress.yaml
   - storageclass-nfs.yaml
   - pvc-backups.yaml
+  - pvc-media.yaml
   - authentik-postgres-backup.yaml
