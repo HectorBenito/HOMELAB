@@ -59,8 +59,6 @@ spec:
                   # -----------------------------
                   echo "[*] Archiving /media..."
                   OUT_MEDIA="${DEST}/authentik-media-${TS}.tar.gz"
-
-                  # Si /media está vacío, tar igualmente crea el archivo (válido)
                   tar -C /media --exclude='lost+found' -czf "${OUT_MEDIA}" .
 
                   echo "[*] Verifying media archive..."
@@ -70,7 +68,7 @@ spec:
                   # Checksums
                   # -----------------------------
                   echo "[*] Checksums..."
-                  ( cd "${DEST}" && sha256sum "authentik-pg-${TS}.dump" "authentik-media-${TS}.tar.gz" >> SHA256SUMS )
+                  ( cd "${DEST}" && sha256sum "authentik-pg-${TS}.dump" "authentik-media-${TS}.tar.gz" >> SHA256SUMS-${TS} )
 
                   # -----------------------------
                   # Rotation + Retention Policy
