@@ -22,7 +22,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
           containers:
             - name: backup
-              image: postgres:16-alpine
+              image: postgres:17-alpine
               securityContext:
                 allowPrivilegeEscalation: false
                 runAsNonRoot: true
