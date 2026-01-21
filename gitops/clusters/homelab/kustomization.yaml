@@ -21,3 +21,4 @@ resources:
   - ./security/authentik/flux-kustomization.yaml
   #- ./security/rbac-oidc/flux-kustomization.yaml
   - ./apps/test-whoami/flux-kustomization.yaml
+  - ./apps/homarr/flux-kustomization.yaml
