@@ -10,8 +10,8 @@ spec:
   failedJobsHistoryLimit: 5
   jobTemplate:
     spec:
-      backoffLimit: 0
-      ttlSecondsAfterFinished: 3600
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 300
       template:
         spec:
           restartPolicy: Never
@@ -104,13 +104,13 @@ spec:
                   fi
 
                   echo "[*] Retention: keep last ${KEEP_DAILY} daily backups..."
-                  ls -1dt "${BASE}/daily"/* 2>/dev/null | tail -n +"$((KEEP_DAILY+1))" | xargs -r rm -rf
+                  ls -1dt "${BASE}/daily"/* 2>/dev/null | tail -n +"$((KEEP_DAILY+1))" | xargs -r rm -rf || true
 
                   echo "[*] Retention: keep last ${KEEP_WEEKLY} weekly backups..."
-                  ls -1dt "${BASE}/weekly"/* 2>/dev/null | tail -n +"$((KEEP_WEEKLY+1))" | xargs -r rm -rf
+                  ls -1dt "${BASE}/weekly"/* 2>/dev/null | tail -n +"$((KEEP_WEEKLY+1))" | xargs -r rm -rf || true
 
                   echo "[*] Retention: keep last ${KEEP_MONTHLY} monthly backups..."
-                  ls -1dt "${BASE}/monthly"/* 2>/dev/null | tail -n +"$((KEEP_MONTHLY+1))" | xargs -r rm -rf
+                  ls -1dt "${BASE}/monthly"/* 2>/dev/null | tail -n +"$((KEEP_MONTHLY+1))" | xargs -r rm -rf || true
 
                   echo "[+] Done. Listing ${DEST}:"
                   ls -lah "${DEST}" | tail -n +1
