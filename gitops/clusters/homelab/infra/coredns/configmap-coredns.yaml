@@ -85,10 +85,11 @@ data:
     ns          IN A 192.168.110.243
 
     ; Traefik (MetalLB LAN)
-    traefik     IN A 192.168.110.242
+    @           IN A 192.168.110.242
+    www         IN A 192.168.110.242
     whoami      IN A 192.168.110.242
-    kube        IN A 192.168.110.242
     auth        IN A 192.168.110.242
+
 
     ; Wildcard para servicios internos
     *           IN A 192.168.110.242
