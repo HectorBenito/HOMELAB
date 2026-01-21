@@ -10,3 +10,4 @@ resources:
   - pvc-backups.yaml
   - pvc-media.yaml
   - authentik-postgres-backup.yaml
+  - authentik-postgres-restore.yaml

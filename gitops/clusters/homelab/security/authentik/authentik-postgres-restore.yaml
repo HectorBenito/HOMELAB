@@ -1,0 +1,174 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: authentik-restore
+  namespace: authentik
+spec:
+  suspend: true
+  schedule: "0 0 31 2 *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          restartPolicy: Never
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: "OnRootMismatch"
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: restore
+              image: postgres:17-alpine
+              securityContext:
+                allowPrivilegeEscalation: false
+                runAsNonRoot: true
+                runAsUser: 568
+                runAsGroup: 568
+                capabilities:
+                  drop: ["ALL"]
+                seccompProfile:
+                  type: RuntimeDefault
+              command: ["/bin/sh","-lc"]
+              env:
+                - name: BACKUP_DATE
+                  value: ""
+                - name: BACKUP_TS
+                  value: ""
+                - name: PGHOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: authentik
+                      key: AUTHENTIK_POSTGRESQL__HOST
+                - name: PGPORT
+                  valueFrom:
+                    secretKeyRef:
+                      name: authentik
+                      key: AUTHENTIK_POSTGRESQL__PORT
+                - name: PGDATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      name: authentik
+                      key: AUTHENTIK_POSTGRESQL__NAME
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      name: authentik
+                      key: AUTHENTIK_POSTGRESQL__USER
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: authentik
+                      key: AUTHENTIK_POSTGRESQL__PASSWORD
+              args:
+                - |
+                  set -euo pipefail
+
+                  echo "[!] AUTHENTIK RESTORE (DESTRUCTIVE)"
+                  echo "[!] This will overwrite PostgreSQL database and /media contents."
+                  echo
+
+                  BASE="/backup"
+
+                  # -----------------------------
+                  # Select backup folder + files
+                  # -----------------------------
+                  if [ -n "${BACKUP_DATE}" ]; then
+                    DATE="${BACKUP_DATE}"
+                  else
+                    DATE="$(ls -1dt "${BASE}/daily/"* 2>/dev/null | head -n1 | xargs -r basename)"
+                  fi
+
+                  if [ -z "${DATE}" ] || [ ! -d "${BASE}/daily/${DATE}" ]; then
+                    echo "[!] No daily backup dir found (BASE=${BASE}/daily). Aborting."
+                    exit 1
+                  fi
+
+                  DIR="${BASE}/daily/${DATE}"
+                  echo "[*] Selected backup dir: ${DIR}"
+
+                  if [ -n "${BACKUP_TS}" ]; then
+                    TS="${BACKUP_TS}"
+                    DUMP="${DIR}/authentik-pg-${TS}.dump"
+                    MEDIA="${DIR}/authentik-media-${TS}.tar.gz"
+                    SUMS="${DIR}/SHA256SUMS-${TS}"
+                  else
+                    # Pick latest dump in that day
+                    DUMP="$(ls -1t "${DIR}/authentik-pg-"*.dump 2>/dev/null | head -n1 || true)"
+                    if [ -z "${DUMP}" ]; then
+                      echo "[!] No dump files found in ${DIR}"
+                      exit 1
+                    fi
+                    TS="$(basename "${DUMP}" | sed -n 's/^authentik-pg-\(.*\)\.dump$/\1/p')"
+                    MEDIA="${DIR}/authentik-media-${TS}.tar.gz"
+                    SUMS="${DIR}/SHA256SUMS-${TS}"
+                  fi
+
+                  echo "[*] Selected TS: ${TS}"
+                  echo "    dump : ${DUMP}"
+                  echo "    media: ${MEDIA}"
+                  echo "    sums : ${SUMS}"
+
+                  # Existence checks
+                  [ -f "${DUMP}" ] || { echo "[!] Missing dump: ${DUMP}"; exit 1; }
+                  [ -f "${MEDIA}" ] || { echo "[!] Missing media: ${MEDIA}"; exit 1; }
+                  [ -f "${SUMS}" ] || { echo "[!] Missing checksum file: ${SUMS}"; exit 1; }
+
+                  # -----------------------------
+                  # Verify checksums
+                  # -----------------------------
+                  echo "[*] Verifying checksums..."
+                  ( cd "${DIR}" && sha256sum -c "$(basename "${SUMS}")" )
+
+                  # -----------------------------
+                  # Restore PostgreSQL (custom dump)
+                  # -----------------------------
+                  echo "[*] Restoring PostgreSQL ${PGHOST}:${PGPORT}/${PGDATABASE} as ${PGUSER}"
+
+                  echo "[*] Terminating active connections..."
+                  psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d postgres \
+                    -v ON_ERROR_STOP=1 \
+                    -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='${PGDATABASE}' AND pid <> pg_backend_pid();"
+
+                  echo "[*] Dropping and recreating database..."
+                  psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d postgres \
+                    -v ON_ERROR_STOP=1 \
+                    -c "DROP DATABASE IF EXISTS \"${PGDATABASE}\";"
+
+                  psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d postgres \
+                    -v ON_ERROR_STOP=1 \
+                    -c "CREATE DATABASE \"${PGDATABASE}\";"
+
+                  echo "[*] Restoring database content..."
+                  pg_restore -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d "${PGDATABASE}" \
+                    --no-owner --no-acl \
+                    --clean --if-exists \
+                    "${DUMP}"
+
+                  # -----------------------------
+                  # Restore /media
+                  # -----------------------------
+                  echo "[*] Restoring /media..."
+                  find /media -mindepth 1 -maxdepth 1 ! -name lost+found -exec rm -rf {} + || true
+                  tar -C /media -xzf "${MEDIA}"
+
+                  echo "[+] Restore completed successfully."
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+                  readOnly: true
+                - name: media
+                  mountPath: /media
+                  readOnly: false
+          volumes:
+            - name: backup
+              persistentVolumeClaim:
+                claimName: authentik-backups
+            - name: media
+              persistentVolumeClaim:
+                claimName: authentik-media
