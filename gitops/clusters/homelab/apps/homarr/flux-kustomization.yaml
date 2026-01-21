@@ -12,7 +12,7 @@ spec:
     kind: GitRepository
     name: flux-system
 
-  path: ./gitops/apps/homarr
+  path: ./gitops/clusters/homelab/apps/homarr
   prune: true
   wait: true
 
