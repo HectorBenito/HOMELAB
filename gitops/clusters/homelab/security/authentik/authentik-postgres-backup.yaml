@@ -61,7 +61,7 @@ spec:
                   OUT_MEDIA="${DEST}/authentik-media-${TS}.tar.gz"
 
                   # Si /media está vacío, tar igualmente crea el archivo (válido)
-                  tar -C /media --exclude='lost+found' --warning=no-file-changed --ignore-failed-read -czf "${OUT_MEDIA}" .
+                  tar -C /media --exclude='lost+found' -czf "${OUT_MEDIA}" .
 
                   echo "[*] Verifying media archive..."
                   tar -tzf "${OUT_MEDIA}" >/dev/null
