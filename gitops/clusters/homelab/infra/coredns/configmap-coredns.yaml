@@ -5,7 +5,7 @@ metadata:
   namespace: coredns
 data:
   Corefile: |
-    # ZONA LAN autoritativa (split-horizon)
+    # Lan autorithative zones *.local.nasbenito.com and *.nasbenito.com domains
     local.nasbenito.com:53 {
         errors
         log
@@ -20,18 +20,20 @@ data:
         cache 30
     }
 
-    # Resto de dominios (recursivo hacia fuera)
+    # upstream DNS resolvers using Cloudflare and Google via DoH
     .:53 {
         errors
         health
         ready
         log
 
-        forward . 1.1.1.1 8.8.8.8 {
-          max_concurrent 1000
+        forward . https://cloudflare-dns.com/dns-query https://dns.google/dns-query {
+            health_check 5s
+            max_concurrent 1000
         }
 
         cache 30
+        loop
         reload
     }
 
