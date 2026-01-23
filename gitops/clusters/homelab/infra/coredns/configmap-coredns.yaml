@@ -5,47 +5,35 @@ metadata:
   namespace: coredns
 data:
   Corefile: |
-    # Lan autorithative zones *.local.nasbenito.com and *.nasbenito.com domains
-    local.nasbenito.com:53 {
-        errors
-        log
-        file /etc/coredns/local.nasbenito.com.db
-        cache 30
-    }
+      local.nasbenito.com:53 {
+          errors
+          log
+          file /etc/coredns/local.nasbenito.com.db
+          cache 30
+      }
 
-    nasbenito.com:53 {
-        errors
-        log
-        hosts {
-            192.168.110.242 nasbenito.com
-            fallthrough 
-        }
-        file /etc/coredns/nasbenito.com.db
-        cache 30
-    }
+      nasbenito.com:53 {
+          errors
+          log
+          file /etc/coredns/nasbenito.com.db
+          cache 30
+      }
 
-    # upstream DNS resolvers using Cloudflare and Google via DoH
-    .:53 {
-        errors
-        health
-        ready
-        log
-
-        forward . https://cloudflare-dns.com/dns-query https://dns.google/dns-query {
-            health_check 5s
-            max_concurrent 1000
-        }
-
-        cache 30
-        loop
-        reload
-    }
+      .:53 {
+          errors
+          health
+          ready
+          log
+          forward . https://cloudflare-dns.com/dns-query https://dns.google/dns-query
+          cache 30
+          reload
+      }
 
   local.nasbenito.com.db: |
     $ORIGIN local.nasbenito.com.
     $TTL 60
 
-    local.nasbenito.com.   IN SOA ns.local.nasbenito.com. hostmaster.local.nasbenito.com. (
+    @   IN SOA ns.local.nasbenito.com. hostmaster.local.nasbenito.com. (
             2026010701 ; serial
             3600       ; refresh
             600        ; retry
@@ -53,29 +41,29 @@ data:
             60         ; minimum
     )
 
-    local.nasbenito.com.           IN NS ns.local.nasbenito.com.
+    @           IN NS ns.local.nasbenito.com.
 
     ; El propio DNS (opcional)
-    ns.local.nasbenito.com.          IN A 192.168.110.243
+    ns         IN A 192.168.110.243
 
     ; Traefik (MetalLB LAN)
-    traefik.local.nasbenito.com.     IN A 192.168.110.242
-    whoami.local.nasbenito.com.      IN A 192.168.110.242
-    kube.local.nasbenito.com.        IN A 192.168.110.242
-    pve1.local.nasbenito.com.        IN A 192.168.110.242
-    pve2.local.nasbenito.com.        IN A 192.168.110.242
-    pve3.local.nasbenito.com.        IN A 192.168.110.242
-    kvm.local.nasbenito.com.         IN A 192.168.110.242
-    omada.local.nasbenito.com.       IN A 192.168.110.242
+    traefik     IN A 192.168.110.242
+    whoami      IN A 192.168.110.242
+    kube        IN A 192.168.110.242
+    pve1        IN A 192.168.110.242
+    pve2        IN A 192.168.110.242
+    pve3        IN A 192.168.110.242
+    kvm         IN A 192.168.110.242
+    omada       IN A 192.168.110.242
 
     ; Wildcard para servicios internos
-    *.local.nasbenito.com.           IN A 192.168.110.242
+    *          IN A 192.168.110.242
 
   nasbenito.com.db: |
     $ORIGIN nasbenito.com.
     $TTL 60
 
-    nasbenito.com.   IN SOA ns.nasbenito.com. hostmaster.nasbenito.com. (
+    @       IN SOA ns.nasbenito.com. hostmaster.nasbenito.com (
             2026010701 ; serial
             3600       ; refresh
             600        ; retry
@@ -83,17 +71,17 @@ data:
             60         ; minimum
     )
 
-    nasbenito.com. IN NS ns.nasbenito.com.
+    @      IN NS ns.nasbenito.com.
 
     ; El propio DNS (opcional)
-    ns.nasbenito.com.     IN A 192.168.110.243
+    ns     IN A 192.168.110.243
 
     ; Traefik (MetalLB LAN)
-    nasbenito.com.        IN A 192.168.110.242
-    www.nasbenito.com.    IN A 192.168.110.242
-    whoami.nasbenito.com. IN A 192.168.110.242
-    auth.nasbenito.com.   IN A 192.168.110.242
+    @      IN A 192.168.110.242
+    www    IN A 192.168.110.242
+    whoami IN A 192.168.110.242
+    auth   IN A 192.168.110.242
 
 
     ; Wildcard para servicios internos
-    *.nasbenito.com.      IN A 192.168.110.242
+    *      IN A 192.168.110.242
