@@ -41,7 +41,7 @@ data:
     $ORIGIN local.nasbenito.com.
     $TTL 60
 
-    @   IN SOA ns.local.nasbenito.com. hostmaster.local.nasbenito.com. (
+    local.nasbenito.com.   IN SOA ns.local.nasbenito.com.  (
             2026010701 ; serial
             3600       ; refresh
             600        ; retry
@@ -49,29 +49,29 @@ data:
             60         ; minimum
     )
 
-    @           IN NS ns.local.nasbenito.com.
+    local.nasbenito.com.           IN NS ns.local.nasbenito.com.
 
     ; El propio DNS (opcional)
-    ns          IN A 192.168.110.243
+    ns.local.nasbenito.com.          IN A 192.168.110.243
 
     ; Traefik (MetalLB LAN)
-    traefik     IN A 192.168.110.242
-    whoami      IN A 192.168.110.242
-    kube        IN A 192.168.110.242
-    pve1        IN A 192.168.110.242
-    pve2        IN A 192.168.110.242
-    pve3        IN A 192.168.110.242
-    kvm         IN A 192.168.110.242
-    omada       IN A 192.168.110.242
+    traefik.local.nasbenito.com.     IN A 192.168.110.242
+    whoami.local.nasbenito.com.      IN A 192.168.110.242
+    kube.local.nasbenito.com.        IN A 192.168.110.242
+    pve1.local.nasbenito.com.        IN A 192.168.110.242
+    pve2.local.nasbenito.com.        IN A 192.168.110.242
+    pve3.local.nasbenito.com.        IN A 192.168.110.242
+    kvm.local.nasbenito.com.         IN A 192.168.110.242
+    omada.local.nasbenito.com.       IN A 192.168.110.242
 
     ; Wildcard para servicios internos
-    *           IN A 192.168.110.242
+    *.local.nasbenito.com.           IN A 192.168.110.242
 
   nasbenito.com.db: |
     $ORIGIN nasbenito.com.
     $TTL 60
 
-    @   IN SOA ns.nasbenito.com. hostmaster.nasbenito.com. (
+    nasbenito.com.   IN SOA ns.nasbenito.com. (
             2026010701 ; serial
             3600       ; refresh
             600        ; retry
@@ -79,17 +79,17 @@ data:
             60         ; minimum
     )
 
-    @           IN NS ns.nasbenito.com.
+    nasbenito.com. IN NS ns.nasbenito.com.
 
     ; El propio DNS (opcional)
-    ns          IN A 192.168.110.243
+    ns.nasbenito.com.     IN A 192.168.110.243
 
     ; Traefik (MetalLB LAN)
-    @           IN A 192.168.110.242
-    www         IN A 192.168.110.242
-    whoami      IN A 192.168.110.242
-    auth        IN A 192.168.110.242
+    nasbenito.com.        IN A 192.168.110.242
+    www.nasbenito.com.    IN A 192.168.110.242
+    whoami.nasbenito.com. IN A 192.168.110.242
+    auth.nasbenito.com.   IN A 192.168.110.242
 
 
     ; Wildcard para servicios internos
-    *           IN A 192.168.110.242
+    *.nasbenito.com.      IN A 192.168.110.242
