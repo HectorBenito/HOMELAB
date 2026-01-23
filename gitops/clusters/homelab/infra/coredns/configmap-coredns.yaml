@@ -63,7 +63,7 @@ data:
     $ORIGIN nasbenito.com.
     $TTL 60
 
-    @       IN SOA ns.nasbenito.com. hostmaster.nasbenito.com (
+    @       IN SOA ns.nasbenito.com. hostmaster.nasbenito.com. (
             2026010701 ; serial
             3600       ; refresh
             600        ; retry
