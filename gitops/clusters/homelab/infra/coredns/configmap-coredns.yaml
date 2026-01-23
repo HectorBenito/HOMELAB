@@ -16,6 +16,10 @@ data:
     nasbenito.com:53 {
         errors
         log
+        hosts {
+            192.168.110.242 nasbenito.com
+            fallthrough 
+        }
         file /etc/coredns/nasbenito.com.db
         cache 30
     }
