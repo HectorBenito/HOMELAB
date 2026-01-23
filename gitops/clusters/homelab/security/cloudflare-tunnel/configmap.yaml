@@ -30,6 +30,13 @@ data:
           originServerName: nasbenito.com
           noTLSVerify: false
 
+      # HOMARR (public)
+      - hostname: www.nasbenito.com
+        service: https://traefik.traefik.svc.cluster.local:443
+        originRequest:
+          originServerName: www.nasbenito.com
+          noTLSVerify: false
+
       # Default catch-all rule to return 404 for undefined hosts
       - hostname: "*.nasbenito.com"
         service: https://traefik.traefik.svc.cluster.local:443
