@@ -5,29 +5,29 @@ metadata:
   namespace: coredns
 data:
   Corefile: |
-      local.nasbenito.com:53 {
-          errors
-          log
-          file /etc/coredns/local.nasbenito.com.db
-          cache 30
-      }
+    local.nasbenito.com:53 {
+        errors
+        log
+        file /etc/coredns/local.nasbenito.com.db
+        cache 30
+    }
 
-      nasbenito.com:53 {
-          errors
-          log
-          file /etc/coredns/nasbenito.com.db
-          cache 30
-      }
+    nasbenito.com:53 {
+        errors
+        log
+        file /etc/coredns/nasbenito.com.db
+        cache 30
+    }
 
-      .:53 {
-          errors
-          health
-          ready
-          log
-          forward . https://cloudflare-dns.com/dns-query https://dns.google/dns-query
-          cache 30
-          reload
-      }
+    .:53 {
+        errors
+        health
+        ready
+        log
+        forward . https://cloudflare-dns.com/dns-query https://dns.google/dns-query
+        cache 30
+        reload
+    }
 
   local.nasbenito.com.db: |
     $ORIGIN local.nasbenito.com.
