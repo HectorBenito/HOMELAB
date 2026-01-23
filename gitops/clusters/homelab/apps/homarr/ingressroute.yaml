@@ -7,27 +7,23 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`nasbenito.com`)
+    - match: Host(`nasbenito.com`) || Host(`www.nasbenito.com`)
       kind: Rule
       services:
         - name: homarr
           port: 7575
-  tls:
-    secretName: nasbenito-com-tls
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: homarr-www
-  namespace: homarr
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`www.nasbenito.com`)
-      kind: Rule
-      services:
-        - name: homarr
-          port: 7575
+      middlewares:
+        - name: redirect-www-to-root
   tls:
     secretName: wildcard-nasbenito-com-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-www-to-root
+  namespace: homarr
+spec:
+  redirectRegex:
+    regex: "^https://www.nasbenito.com/(.*)"
+    replacement: "https://nasbenito.com/${1}"
+    permanent: true
