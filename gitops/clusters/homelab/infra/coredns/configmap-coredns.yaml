@@ -24,7 +24,7 @@ data:
         health
         ready
         log
-        # Upstream Cloudflare
+        # Upstream Cloudflare DNS encrypted resolver.
         forward . tls://1.1.1.1 tls://1.0.0.1 tls://2606:4700:4700::1111 tls://2606:4700:4700::1001 {
             tls_servername cloudflare-dns.com
             health_check 5s
