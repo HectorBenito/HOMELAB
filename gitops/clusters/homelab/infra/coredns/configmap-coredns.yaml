@@ -59,6 +59,8 @@ data:
     pve3        IN A 192.168.110.242
     kvm         IN A 192.168.110.242
     omada       IN A 192.168.110.242
+    pgadmin     IN A 192.168.110.242
+    minio       IN A 192.168.110.242
 
     ; Wildcard para servicios internos
     *          IN A 192.168.110.242

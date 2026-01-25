@@ -1,0 +1,21 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: minio-console
+  namespace: minio
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`minio.local.nasbenito.com`)
+      kind: Rule
+      services:
+        # Si el servicio de consola se llama distinto en tu release, ajusta aquí.
+        - name: minio-console
+          port: 9001
+      # Recomendado cuando lo tengas listo:
+      # middlewares:
+      #   - name: authentik-forwardauth
+      #     namespace: authentik
+  tls:
+    secretName: wildcard-local-nasbenito-com-tls

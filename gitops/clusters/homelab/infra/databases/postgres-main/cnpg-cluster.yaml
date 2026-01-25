@@ -1,0 +1,49 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: pg-main
+  namespace: postgres
+spec:
+  instances: 3
+
+  affinity:
+    podAntiAffinityType: required
+
+  resources:
+    requests:
+      cpu: "1"
+      memory: 4Gi
+    limits:
+      cpu: "4"
+      memory: 12Gi
+
+  storage:
+    storageClass: longhorn
+    size: 100Gi
+
+  postgresql:
+    parameters:
+      # Conservador y estable (para empezar)
+      shared_buffers: "2GB"
+      effective_cache_size: "8GB"
+      maintenance_work_mem: "512MB"
+      wal_compression: "on"
+      max_wal_size: "8GB"
+      min_wal_size: "1GB"
+
+  backup:
+    barmanObjectStore:
+      destinationPath: "s3://cnpg-backups/pg-main"
+      endpointURL: "http://minio.minio.svc.cluster.local:9000"
+      s3Credentials:
+        accessKeyId:
+          name: cnpg-s3
+          key: AWS_ACCESS_KEY_ID
+        secretAccessKey:
+          name: cnpg-s3
+          key: AWS_SECRET_ACCESS_KEY
+      s3:
+        forcePathStyle: true
+      wal:
+        compression: gzip
+    retentionPolicy: "30d"

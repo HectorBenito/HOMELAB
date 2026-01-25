@@ -1,0 +1,86 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-bootstrap-cnpg-backups
+  namespace: minio
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: mc
+          image: minio/mc:latest
+          command: ["/bin/sh", "-lc"]
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: minio-root
+                  key: rootUser
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: minio-root
+                  key: rootPassword
+            - name: CNPG_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-cnpg-user
+                  key: accessKey
+            - name: CNPG_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-cnpg-user
+                  key: secretKey
+          args:
+            - |
+              set -euo pipefail
+
+              # Alias a tu MinIO dentro del cluster
+              mc alias set local http://minio.minio.svc.cluster.local:9000 "${MINIO_ROOT_USER}" "${MINIO_ROOT_PASSWORD}"
+
+              # 1) Bucket
+              mc mb --ignore-existing local/cnpg-backups
+
+              # 2) Policy mínima para CNPG (solo cnpg-backups/pg-main/*)
+              cat >/tmp/cnpg-policy.json <<'EOF'
+              {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": ["s3:ListBucket"],
+                    "Resource": ["arn:aws:s3:::cnpg-backups"],
+                    "Condition": {
+                      "StringLike": {
+                        "s3:prefix": ["pg-main/*"]
+                      }
+                    }
+                  },
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "s3:GetObject",
+                      "s3:PutObject",
+                      "s3:DeleteObject",
+                      "s3:AbortMultipartUpload",
+                      "s3:ListMultipartUploadParts"
+                    ],
+                    "Resource": ["arn:aws:s3:::cnpg-backups/pg-main/*"]
+                  }
+                ]
+              }
+              EOF
+
+              # En MinIO/mc hay varias variantes (add/create). Aquí usamos create+attach (actual docs).
+              # Crea policy si no existe (si existe, puede fallar: lo toleramos y seguimos).
+              mc admin policy create local cnpg-pg-main /tmp/cnpg-policy.json || true
+
+              # 3) Usuario (si existe, toleramos)
+              mc admin user add local "${CNPG_ACCESS_KEY}" "${CNPG_SECRET_KEY}" || true
+
+              # 4) Attach policy al user
+              mc admin policy attach local cnpg-pg-main --user "${CNPG_ACCESS_KEY}" || true
+
+              echo "[OK] Bucket + user/policy preparados"
