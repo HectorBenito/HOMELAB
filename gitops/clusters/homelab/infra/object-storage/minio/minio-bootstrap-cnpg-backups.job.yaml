@@ -4,7 +4,7 @@ metadata:
   name: minio-bootstrap-cnpg-backups
   namespace: minio
 spec:
-  backoffLimit: 3
+  backoffLimit: 6
   template:
     spec:
       restartPolicy: OnFailure
@@ -37,13 +37,24 @@ spec:
             - |
               set -euo pipefail
 
-              # Alias a tu MinIO dentro del cluster
+              echo "[*] Waiting for MinIO service to be ready..."
+              # Espera hasta 3 minutos a que MinIO acepte credenciales (alias set)
+              for i in $(seq 1 36); do
+                if mc alias set local http://minio.minio.svc.cluster.local:9000 "${MINIO_ROOT_USER}" "${MINIO_ROOT_PASSWORD}" >/dev/null 2>&1; then
+                  echo "[OK] MinIO reachable and credentials accepted"
+                  break
+                fi
+                echo "  - not ready yet (${i}/36), sleeping 5s..."
+                sleep 5
+              done
+
+              # Si después del bucle no funciona, fallamos explícito (para logs claros)
               mc alias set local http://minio.minio.svc.cluster.local:9000 "${MINIO_ROOT_USER}" "${MINIO_ROOT_PASSWORD}"
 
-              # 1) Bucket
+              echo "[*] Creating bucket (idempotent)"
               mc mb --ignore-existing local/cnpg-backups
 
-              # 2) Policy mínima para CNPG (solo cnpg-backups/pg-main/*)
+              echo "[*] Writing policy file"
               cat >/tmp/cnpg-policy.json <<'EOF'
               {
                 "Version": "2012-10-17",
@@ -73,14 +84,13 @@ spec:
               }
               EOF
 
-              # En MinIO/mc hay varias variantes (add/create). Aquí usamos create+attach (actual docs).
-              # Crea policy si no existe (si existe, puede fallar: lo toleramos y seguimos).
-              mc admin policy create local cnpg-pg-main /tmp/cnpg-policy.json || true
+              echo "[*] Creating policy (tolerate already-exists)"
+              (mc admin policy create local cnpg-pg-main /tmp/cnpg-policy.json || mc admin policy add local cnpg-pg-main /tmp/cnpg-policy.json || true)
 
-              # 3) Usuario (si existe, toleramos)
+              echo "[*] Creating user (tolerate already-exists)"
               mc admin user add local "${CNPG_ACCESS_KEY}" "${CNPG_SECRET_KEY}" || true
 
-              # 4) Attach policy al user
-              mc admin policy attach local cnpg-pg-main --user "${CNPG_ACCESS_KEY}" || true
+              echo "[*] Attaching policy to user (tolerate already-attached)"
+              (mc admin policy attach local cnpg-pg-main --user "${CNPG_ACCESS_KEY}" || mc admin policy set local cnpg-pg-main user="${CNPG_ACCESS_KEY}" || true)
 
               echo "[OK] Bucket + user/policy preparados"
