@@ -23,7 +23,6 @@ spec:
 
   postgresql:
     parameters:
-      # Conservador y estable (para empezar)
       shared_buffers: "2GB"
       effective_cache_size: "8GB"
       maintenance_work_mem: "512MB"
@@ -42,8 +41,12 @@ spec:
         secretAccessKey:
           name: cnpg-s3
           key: AWS_SECRET_ACCESS_KEY
-      s3:
-        forcePathStyle: true
+      data:
+        additionalCommandArgs:
+          - "--s3-force-path-style"
       wal:
         compression: gzip
+        additionalCommandArgs:
+          - "--s3-force-path-style"
     retentionPolicy: "30d"
+
