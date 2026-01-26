@@ -17,6 +17,10 @@ spec:
       cpu: "4"
       memory: 12Gi
 
+  env:
+    - name: AWS_S3_FORCE_PATH_STYLE
+      value: "true"
+
   storage:
     storageClass: longhorn
     size: 100Gi
@@ -41,12 +45,7 @@ spec:
         secretAccessKey:
           name: cnpg-s3
           key: AWS_SECRET_ACCESS_KEY
-      data:
-        additionalCommandArgs:
-          - "--s3-force-path-style"
       wal:
         compression: gzip
-        additionalCommandArgs:
-          - "--s3-force-path-style"
     retentionPolicy: "30d"
 
