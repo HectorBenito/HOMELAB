@@ -15,10 +15,7 @@ spec:
         namespace: pgadmin
   values:
     existingSecret: pgadmin-admin
-    secretKeys:
-      pgadminPasswordKey: password
-      pgadminEmailKey: email
-
+    
     persistentVolume:
       enabled: true
       storageClass: longhorn
