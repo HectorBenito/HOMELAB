@@ -23,7 +23,7 @@ spec:
 
   storage:
     storageClass: longhorn
-    size: 100Gi
+    size: 50Gi
 
   postgresql:
     parameters:
