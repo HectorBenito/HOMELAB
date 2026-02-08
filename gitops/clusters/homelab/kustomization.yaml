@@ -6,7 +6,8 @@ resources:
   - ./infra/nfs-csi/flux-kustomization.yaml
   - ./infra/longhorn/flux-kustomization.yaml
   - ./infra/cert-manager/flux-kustomization.yaml
-  - ./infra/traefik/flux-kustomization.yaml
+  - ./infra/traefik/app/flux-kustomization.yaml
+  - ./infra/traefik/crds/flux-kustomization.yaml
   - ./infra/traefik-dashboard/flux-kustomization.yaml
   - ./infra/kubernetes-dashboard/flux-kustomization.yaml
   - ./infra/coredns/flux-kustomization.yaml
