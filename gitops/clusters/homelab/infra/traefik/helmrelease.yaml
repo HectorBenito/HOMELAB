@@ -13,6 +13,9 @@ spec:
         name: traefik
         namespace: flux-system
       interval: 1h
+      dependsOn:
+        - name: traefik-crds
+          namespace: flux-system
   values:
     deployment:
       replicas: 3

@@ -38,7 +38,7 @@
   ansible.builtin.copy:
     content: |
       cluster:
-        allowSchedulingOnControlPlanes: {{ allow_scheduling_on_control_planes | lower }}
+        allowSchedulingOnControlPlanes: false
     dest: "{{ talos_config_dir }}/allowcontrolplanes.yaml"
     mode: '0644'
 
