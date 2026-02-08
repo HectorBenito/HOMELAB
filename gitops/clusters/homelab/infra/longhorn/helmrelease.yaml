@@ -18,10 +18,7 @@ spec:
       defaultClass: true
       defaultFsType: ext4
     defaultSettings:
-      # En un clúster de 3 nodos, 3 réplicas = alta disponibilidad
+      defaultDataPath: /var/mnt/longhorn
       defaultReplicaCount: 3
-      replicaCount: 3
-
-      # (Opcional) Recomiendo reservar algo de espacio para evitar llenados
       storageOverProvisioningPercentage: 200
       storageMinimalAvailablePercentage: 10
