@@ -20,15 +20,12 @@ talos_nodes:
     - hostname: "talos-control-1"
       ip: "192.168.110.18"
       vmid: 1110
-      longhorn_disk: "/dev/sdb" 
     - hostname: "talos-control-2"
       ip: "192.168.110.20"
       vmid: 2110
-      longhorn_disk: "/dev/sdb"
     - hostname: "talos-control-3"
       ip: "192.168.110.22"
       vmid: 3110
-      longhorn_disk: "/dev/sdb"
   # VM workers
   workers:
     - hostname: "talos-worker-1"
