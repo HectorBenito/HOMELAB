@@ -46,12 +46,6 @@ resource "proxmox_vm_qemu" "talos_control" {
           size    = each.value.disk_size
         }
       }
-      scsi1 {
-        disk {
-          storage = each.value.disk_storage
-          size    = each.value.longhorn_disk_size
-        }
-      }
     }
     ide {
       ide2 {

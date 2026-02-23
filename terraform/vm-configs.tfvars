@@ -11,7 +11,6 @@ talos_control_configuration = [
     memory    = 4096
     disk_storage   = "POOL"
     disk_size = "50G"
-    longhorn_disk_size = "50G"
     networks = [
       {
         id      = 0
@@ -27,7 +26,6 @@ talos_control_configuration = [
     memory    = 4096
     disk_storage   = "POOL"
     disk_size = "50G"
-    longhorn_disk_size = "50G"
     networks = [
       {
         id      = 0
@@ -43,7 +41,6 @@ talos_control_configuration = [
     memory    = 4096
     disk_storage   = "POOL"
     disk_size = "50G"
-    longhorn_disk_size = "50G"
     networks = [
       {
         id      = 0
@@ -64,7 +61,8 @@ talos_worker_configuration = [
     memory    = 20480
     disk_storage   = "POOL"
     disk_size = "100G"
-    longhorn_disk_size = "2000G"
+    longhorn_disk_storage   = "POOL-LOCAL"
+    longhorn_disk_size = "1750G"
     networks = [
       {
         id      = 0
@@ -80,7 +78,8 @@ talos_worker_configuration = [
     memory    = 20480
     disk_storage   = "POOL"
     disk_size = "100G"
-    longhorn_disk_size = "2000G"
+    longhorn_disk_storage   = "POOL-LOCAL"
+    longhorn_disk_size = "1750G"
     networks = [
       {
         id      = 0
@@ -96,7 +95,8 @@ talos_worker_configuration = [
     memory    = 20480
     disk_storage   = "POOL"
     disk_size = "100G"
-    longhorn_disk_size = "2000G"
+    longhorn_disk_storage   = "POOL-LOCAL"
+    longhorn_disk_size = "1750G"
     networks = [
       {
         id      = 0

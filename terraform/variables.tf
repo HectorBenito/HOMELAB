@@ -40,7 +40,6 @@ variable talos_control_configuration {
       memory    = number
       disk_storage   = string
       disk_size = string
-      longhorn_disk_size = string
       networks = list(object(
         {
           id      = number
@@ -63,6 +62,7 @@ variable talos_worker_configuration {
       memory    = number
       disk_storage   = string
       disk_size = string
+      longhorn_disk_storage = string
       longhorn_disk_size = string
       networks = list(object(
         {
