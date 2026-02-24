@@ -19,6 +19,6 @@ spec:
       defaultFsType: ext4
     defaultSettings:
       defaultDataPath: /var/mnt/longhorn
-      defaultReplicaCount: 3
-      storageOverProvisioningPercentage: 200
-      storageMinimalAvailablePercentage: 10
+      defaultReplicaCount: 2
+      storageOverProvisioningPercentage: 100
+      storageMinimalAvailablePercentage: 5
