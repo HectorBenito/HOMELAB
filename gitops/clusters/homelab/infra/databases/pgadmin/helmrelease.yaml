@@ -15,6 +15,9 @@ spec:
         namespace: pgadmin
   values:
     existingSecret: pgadmin-admin
+
+    env:
+      email: hector_admin@nasbenito.com
     
     persistentVolume:
       enabled: true
