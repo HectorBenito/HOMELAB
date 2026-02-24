@@ -19,6 +19,8 @@ spec:
     env:
       email: hector_admin@nasbenito.com
 
+    replicaCount: 1
+    
     serverDefinitions:
       enabled: true
       resourceType: ConfigMap
