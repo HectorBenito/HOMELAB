@@ -20,7 +20,17 @@ spec:
       email: hector_admin@nasbenito.com
 
     replicaCount: 1
-    
+
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 5050
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      seccompProfile:
+        type: RuntimeDefault
+
     serverDefinitions:
       enabled: true
       resourceType: ConfigMap
