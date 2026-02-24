@@ -21,15 +21,17 @@ spec:
 
     replicaCount: 1
 
-    securityContext:
+    podSecurityContext:
       runAsNonRoot: true
       runAsUser: 5050
+      seccompProfile:
+        type: RuntimeDefault
+
+    securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
           - ALL
-      seccompProfile:
-        type: RuntimeDefault
 
     serverDefinitions:
       enabled: true
