@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m
-  path: ./gitops/clusters/homelab/infra/kubernetes-dashboard
+  path: ./gitops/clusters/homelab/infra/headlamp
   prune: true
   wait: true
   timeout: 10m

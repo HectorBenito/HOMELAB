@@ -1,0 +1,34 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: headlamp
+  namespace: headlamp
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: headlamp
+      version: "0.40.x"
+      sourceRef:
+        kind: HelmRepository
+        name: headlamp
+        namespace: flux-system
+      interval: 1h
+
+  values:
+    replicaCount: 1
+
+    service:
+      type: ClusterIP
+      port: 80
+
+   
+    config:
+      inCluster: true
+
+    serviceAccount:
+      create: true
+      name: headlamp
+
+    rbac:
+      create: true

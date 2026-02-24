@@ -8,7 +8,7 @@ resources:
   - ./infra/cert-manager/flux-kustomization.yaml
   - ./infra/traefik/app/flux-kustomization.yaml
   - ./infra/traefik/crds/flux-kustomization.yaml
-  - ./infra/traefik-dashboard/flux-kustomization.yaml
+  - ./infra/headlamp/flux-kustomization.yaml
   - ./infra/kubernetes-dashboard/flux-kustomization.yaml
   - ./infra/coredns/flux-kustomization.yaml
   - ./infra/pve/flux-kustomization.yaml
@@ -22,7 +22,6 @@ resources:
   #- ./infra/jetkvm-cloud/flux-kustomization.yaml
   - ./security/cert-manager-issuers/flux-kustomization.yaml
   - ./security/cloudflare/flux-kustomization.yaml
-  #- ./security/freeipa/flux-kustomization.yaml
   - ./security/cloudflare-tunnel/flux-kustomization.yaml
   - ./security/authentik/flux-kustomization.yaml
   #- ./security/rbac-oidc/flux-kustomization.yaml

@@ -62,7 +62,7 @@ talos_worker_configuration = [
     disk_storage   = "POOL"
     disk_size = "100G"
     longhorn_disk_storage   = "POOL-LOCAL"
-    longhorn_disk_size = "1750G"
+    longhorn_disk_size = "1800G"
     networks = [
       {
         id      = 0
@@ -79,7 +79,7 @@ talos_worker_configuration = [
     disk_storage   = "POOL"
     disk_size = "100G"
     longhorn_disk_storage   = "POOL-LOCAL"
-    longhorn_disk_size = "1750G"
+    longhorn_disk_size = "1800G"
     networks = [
       {
         id      = 0
@@ -96,7 +96,7 @@ talos_worker_configuration = [
     disk_storage   = "POOL"
     disk_size = "100G"
     longhorn_disk_storage   = "POOL-LOCAL"
-    longhorn_disk_size = "1750G"
+    longhorn_disk_size = "1800G"
     networks = [
       {
         id      = 0
