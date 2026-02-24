@@ -18,6 +18,19 @@ spec:
 
     env:
       email: hector_admin@nasbenito.com
+
+    serverDefinitions:
+      enabled: true
+      resourceType: ConfigMap
+      servers:
+        "1":
+          Name: "postgres-main (rw)"
+          Group: "Servers"
+          Host: "pg-main-rw.postgres.svc.cluster.local"
+          Port: 5432
+          Username: "postgres"
+          SSLMode: "prefer"
+          MaintenanceDB: "postgres"
     
     persistentVolume:
       enabled: true
