@@ -18,6 +18,7 @@ resources:
   - ./infra/databases/cloudnative-pg/flux-kustomization.yaml
   - ./infra/databases/postgres-main/flux-kustomization.yaml
   - ./infra/databases/pgadmin/flux-kustomization.yaml
+  - ./infra/databases/reflector/flux-kustomization.yaml
   - ./infra/observability/metrics-server/flux-kustomization.yaml
   #- ./infra/jetkvm-cloud/flux-kustomization.yaml
   - ./security/cert-manager-issuers/flux-kustomization.yaml

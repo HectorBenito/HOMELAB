@@ -5,3 +5,5 @@ resources:
   - cnpg-s3.secret.sops.yaml
   - cnpg-cluster.yaml
   - cnpg-scheduledbackup.yaml
+patchesStrategicMerge:
+  - reflect-pg-main-app-secret.yaml
