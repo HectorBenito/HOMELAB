@@ -6,8 +6,16 @@ resources:
   - authentik-values.secret.sops.yaml
   - helmrelease.yaml
   - ingress.yaml
-  - storageclass-nfs.yaml
-  - pvc-backups.yaml
   - pvc-media.yaml
-  - authentik-postgres-backup.yaml
-  - authentik-postgres-restore.yaml
+  - authentik-db-credentials-postgres.secret.sops.yaml
+  - cnpg-database.yaml
+  - authentik-db-credentials-authentik.secret.sops.yaml
+
+patches:
+  - path: cnpg-role-patch.yaml
+    target:
+      group: postgresql.cnpg.io
+      version: v1
+      kind: Cluster
+      name: pg-main
+      namespace: postgres

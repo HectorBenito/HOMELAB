@@ -1,0 +1,14 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: pg-main
+  namespace: postgres
+spec:
+  managed:
+    roles:
+      - name: app-authentik
+        ensure: present
+        login: true
+        superuser: false
+        passwordSecret:
+          name: authentik-db-credentials
