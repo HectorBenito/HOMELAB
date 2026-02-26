@@ -16,6 +16,7 @@ spec:
   dependsOn:
     - name: traefik
     - name: cert-manager
+    - name: postgres-main
   decryption:
     provider: sops
     secretRef:

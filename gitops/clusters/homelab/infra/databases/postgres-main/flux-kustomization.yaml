@@ -14,7 +14,6 @@ spec:
   timeout: 15m
   dependsOn:
     - name: cloudnative-pg-operator
-    - name: minio
   decryption:
     provider: sops
     secretRef:

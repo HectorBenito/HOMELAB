@@ -12,8 +12,6 @@ spec:
     name: flux-system
   wait: true
   timeout: 10m
-  dependsOn:
-    - name: minio
   decryption:
     provider: sops
     secretRef:
