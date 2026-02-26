@@ -6,3 +6,13 @@ resources:
   - pgadmin.secret.sops.yaml
   - helmrelease.yaml
   - ingressroute.yaml
+  - pgadmin-db-admin-credentials.secret.sops.yaml
+
+patches:
+  - path: pg-main-managed-roles-patch.yaml
+    target:
+      group: postgresql.cnpg.io
+      version: v1
+      kind: Cluster
+      name: pg-main
+      namespace: postgres
