@@ -19,6 +19,13 @@ spec:
     env:
       email: hector_admin@nasbenito.com
     
+    extraSecretMounts:
+      - name: pgpassfile
+        secret: pgadmin-db-admin-credentials
+        subPath: pgpass
+        mountPath: "/var/lib/storage/pgpass"
+        readOnly: true
+
     replicaCount: 1
 
     podSecurityContext:
