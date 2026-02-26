@@ -18,14 +18,6 @@ spec:
 
     env:
       email: hector_admin@nasbenito.com
-      pgpassfile: /var/lib/pgadmin/storage/pgadmin/pg-main.pgpass
-
-    extraSecretMounts:
-      - name: pgpassfile
-        secret: pgadmin-db-admin-credentials
-        subPath: pgpass
-        mountPath: "/var/lib/pgadmin/storage/pgadmin/pg-main.pgpass"
-        readOnly: true 
     
     replicaCount: 1
 
@@ -45,16 +37,8 @@ spec:
 
     serverDefinitions:
       enabled: true
-      resourceType: ConfigMap
-      servers:
-        "1":
-          Name: "postgres-main (rw)"
-          Group: "CNPG"
-          Host: "pg-main-rw.postgres.svc.cluster.local"
-          Port: 5432
-          Username: "pgadmin-admin"
-          SSLMode: "prefer"
-          MaintenanceDB: "postgres"
+      resourceType: Secret
+      existingSecret: pgadmin-servers
     
     persistentVolume:
       enabled: true
