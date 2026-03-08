@@ -23,7 +23,7 @@ spec:
       - name: pgpassfile
         secret: pgadmin-db-admin-credentials
         subPath: pgpass
-        mountPath: "/var/lib/pgadmin/storage/pgpass"
+        mountPath: "/var/lib/pgadmin/storage/pgadmin/pg-main.pgpass"
         readOnly: true
 
     replicaCount: 1
