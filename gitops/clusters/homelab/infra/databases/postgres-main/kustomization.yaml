@@ -5,3 +5,12 @@ resources:
   - cnpg-s3.secret.sops.yaml
   - cnpg-cluster.yaml
   - cnpg-scheduledbackup.yaml
+
+patches:
+  - path: pg-main-managed-roles-patch.yaml
+    target:
+      group: postgresql.cnpg.io
+      version: v1
+      kind: Cluster
+      name: pg-main
+      namespace: postgres
