@@ -6,5 +6,4 @@ resources:
   - pgadmin.secret.sops.yaml
   - helmrelease.yaml
   - ingressroute.yaml
-  - pgadmin-db-admin-credentials.secret.sops.yaml
   - pgadmin-servers.secret.sops.yaml
