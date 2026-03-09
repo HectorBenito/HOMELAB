@@ -24,6 +24,6 @@ data:
         'OAUTH2_USERINFO_ENDPOINT': 'https://auth.nasbenito.com/application/o/userinfo/',
 
         'OAUTH2_SCOPE': 'openid email profile',
-        'OAUTH2_USERNAME_CLAIM': 'preferred_username',
+        'OAUTH2_USERNAME_CLAIM': 'email',
         'OAUTH2_SSL_CERT_VERIFICATION': True
     }]
