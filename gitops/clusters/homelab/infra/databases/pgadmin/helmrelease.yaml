@@ -23,8 +23,32 @@ spec:
     - name: pgpassfile
       secret: pgadmin-db-credentials
       subPath: pgpass
-      mountPath: /var/lib/pgadmin/storage/hector_admin_nasbenito.com/pgpass
+      mountPath: /tmp/.pgpass
       readOnly: true
+
+    extraInitContainers: |
+      - name: setup-pgpass
+        image: dpage/pgadmin4:latest
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+            mkdir -p /var/lib/pgadmin/storage/hector_admin_nasbenito.com
+            cp /tmp/.pgpass /var/lib/pgadmin/storage/hector_admin_nasbenito.com/pgpass
+            chown 5050:5050 /var/lib/pgadmin/storage/hector_admin_nasbenito.com/pgpass
+            chmod 600 /var/lib/pgadmin/storage/hector_admin_nasbenito.com/pgpass
+            cp /tmp/.pgpass /var/lib/pgadmin/.pgpass
+            chown 5050:5050 /var/lib/pgadmin/.pgpass
+            chmod 600 /var/lib/pgadmin/.pgpass
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+          - name: pgadmin-data
+            mountPath: /var/lib/pgadmin
+          - name: pgpassfile
+            mountPath: /tmp/.pgpass
+            subPath: pgpass
 
     replicaCount: 1
 
