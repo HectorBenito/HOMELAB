@@ -17,7 +17,7 @@ spec:
     existingSecret: pgadmin-admin
 
     env:
-      email: hector_admin@nasbenito.com
+      email: admin@example.com
 
     envVarsFromSecrets:
       - pgadmin-oidc-secret
