@@ -5,6 +5,7 @@ metadata:
   namespace: minio
 spec:
   interval: 30m
+  timeout: 15m
   chart:
     spec:
       chart: minio
@@ -38,3 +39,27 @@ spec:
     consoleService:
       type: ClusterIP
       port: 9001
+
+    extraEnvVars:
+      - name: MINIO_BROWSER_REDIRECT_URL
+        value: "https://minio.local.nasbenito.com"
+      - name: MINIO_IDENTITY_OPENID_CONFIG_URL
+        value: "https://auth.nasbenito.com/application/o/minio/.well-known/openid-configuration"
+      - name: MINIO_IDENTITY_OPENID_CLIENT_ID
+        valueFrom:
+          secretKeyRef:
+            name: minio-oidc
+            key: client-id
+      - name: MINIO_IDENTITY_OPENID_CLIENT_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: minio-oidc
+            key: client-secret
+      - name: MINIO_IDENTITY_OPENID_DISPLAY_NAME
+        value: "Authentik"
+      - name: MINIO_IDENTITY_OPENID_CLAIM_NAME
+        value: "policy"
+      - name: MINIO_IDENTITY_OPENID_SCOPES
+        value: "openid,profile,email"
+      - name: MINIO_IDENTITY_OPENID_REDIRECT_URI
+        value: "https://minio.local.nasbenito.com/oauth_callback"
