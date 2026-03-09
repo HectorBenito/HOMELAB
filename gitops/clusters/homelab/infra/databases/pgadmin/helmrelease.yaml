@@ -18,6 +18,7 @@ spec:
 
     env:
       email: hector_admin@nasbenito.com
+      pgpassfile: /var/lib/pgadmin/storage/pgadmin/pg-main.pgpass
     
     extraSecretMounts:
       - name: pgpassfile
@@ -27,6 +28,9 @@ spec:
         readOnly: true
 
     replicaCount: 1
+
+    strategy:
+      type: Recreate
 
     podSecurityContext:
       runAsNonRoot: true
@@ -48,9 +52,7 @@ spec:
       existingSecret: pgadmin-servers
     
     persistentVolume:
-      enabled: true
-      storageClass: longhorn
-      size: 5Gi
+      enabled: false
 
     service:
       type: ClusterIP
