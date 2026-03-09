@@ -7,3 +7,5 @@ resources:
   - helmrelease.yaml
   - ingressroute.yaml
   - pgadmin-servers.secret.sops.yaml
+  - pgadmin-config.yaml
+  - pgadmin-oidc.secret.sops.yaml

@@ -18,13 +18,23 @@ spec:
 
     env:
       email: hector_admin@nasbenito.com
+
+    envVarsFromSecrets:
+      - pgadmin-oidc-secret
     
+    extraConfigmapMounts:
+      - name: config-local
+        configMap: pgadmin-config
+        mountPath: /pgadmin4/config_local.py
+        subPath: config_local.py
+        readOnly: true
+
     extraSecretMounts:
-    - name: pgpassfile
-      secret: pgadmin-db-credentials
-      subPath: pgpass
-      mountPath: /tmp/.pgpass
-      readOnly: true
+      - name: pgpassfile
+        secret: pgadmin-db-credentials
+        subPath: pgpass
+        mountPath: /tmp/.pgpass
+        readOnly: true
 
     extraInitContainers: |
       - name: setup-pgpass
