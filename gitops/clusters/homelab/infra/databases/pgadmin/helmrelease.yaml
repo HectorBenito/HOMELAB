@@ -44,13 +44,17 @@ spec:
           - /bin/sh
           - -c
           - |
-            mkdir -p /var/lib/pgadmin/storage/hector_admin_nasbenito.com
-            cp /tmp/.pgpass /var/lib/pgadmin/storage/hector_admin_nasbenito.com/pgpass
-            chown 5050:5050 /var/lib/pgadmin/storage/hector_admin_nasbenito.com/pgpass
-            chmod 600 /var/lib/pgadmin/storage/hector_admin_nasbenito.com/pgpass
             cp /tmp/.pgpass /var/lib/pgadmin/.pgpass
             chown 5050:5050 /var/lib/pgadmin/.pgpass
             chmod 600 /var/lib/pgadmin/.pgpass
+            mkdir -p /var/lib/pgadmin/storage
+            for d in /var/lib/pgadmin/storage/*; do
+              if [ -d "$d" ]; then
+                cp /tmp/.pgpass "$d/.pgpass"
+                chown 5050:5050 "$d/.pgpass"
+                chmod 600 "$d/.pgpass"
+              fi
+            done
         securityContext:
           runAsUser: 0
         volumeMounts:
