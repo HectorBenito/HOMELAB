@@ -18,14 +18,12 @@ spec:
 
     env:
       email: hector_admin@nasbenito.com
-      pgpassfile: /pgpass/pg-main.pgpass
-      replaceServersOnStartup: "True"
     
     extraSecretMounts:
       - name: pgpassfile
         secret: pgadmin-db-credentials
         subPath: pgpass
-        mountPath: /pgpass/pg-main.pgpass
+        mountPath: /var/lib/pgadmin/storage/hector_admin_nasbenito.com/pg-main.pgpass
         readOnly: true
 
     replicaCount: 1
@@ -54,10 +52,10 @@ spec:
       existingSecret: pgadmin-servers
     
     persistentVolume:
-      enabled: false
-
-    VolumePermissions:
       enabled: true
+      accessMode: ReadWriteOnce
+      size: 5Gi
+      storageClass: longhorn
 
     service:
       type: ClusterIP
