@@ -17,7 +17,13 @@ spec:
   values:
     mode: standalone
 
-    existingSecret: minio-root
+    auth:
+      existingSecret: minio-root
+
+    defaultBuckets: ""
+
+    statefulset:
+      replicaCount: 1
 
     persistence:
       enabled: true
@@ -34,11 +40,15 @@ spec:
 
     service:
       type: ClusterIP
-      port: 9000
+      ports:
+        api: 9000
 
-    consoleService:
-      type: ClusterIP
-      port: 9001
+    console:
+      enabled: true
+      service:
+        type: ClusterIP
+        ports:
+          http: 9001
 
     extraEnvVars:
       - name: MINIO_BROWSER_REDIRECT_URL
