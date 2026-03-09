@@ -32,23 +32,6 @@ spec:
     strategy:
       type: Recreate
 
-    extraInitContainers:
-      - name: init-pgadmin-storage
-        image: busybox:1.36
-        command:
-          - sh
-          - -c
-          - |
-            mkdir -p /var/lib/pgadmin/storage/pgadmin
-            chown -R 5050:5050 /var/lib/pgadmin
-            chmod -R 775 /var/lib/pgadmin
-        volumeMounts:
-          - name: pgadmin-data
-            mountPath: /var/lib/pgadmin
-        securityContext:
-          runAsUser: 0
-          runAsGroup: 0
-
     podSecurityContext:
       runAsNonRoot: true
       runAsUser: 5050
@@ -71,6 +54,9 @@ spec:
     
     persistentVolume:
       enabled: false
+
+    VolumePermissions:
+      enabled: true
 
     service:
       type: ClusterIP
