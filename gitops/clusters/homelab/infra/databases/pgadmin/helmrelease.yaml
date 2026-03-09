@@ -48,6 +48,10 @@ spec:
             cp /tmp/.pgpass /var/lib/pgadmin/storage/hector_admin_nasbenito.com/pgpass
             chown 5050:5050 /var/lib/pgadmin/storage/hector_admin_nasbenito.com/pgpass
             chmod 600 /var/lib/pgadmin/storage/hector_admin_nasbenito.com/pgpass
+            mkdir -p /var/lib/pgadmin/storage/Hector_admin
+            cp /tmp/.pgpass /var/lib/pgadmin/storage/Hector_admin/pgpass
+            chown 5050:5050 /var/lib/pgadmin/storage/Hector_admin/pgpass
+            chmod 600 /var/lib/pgadmin/storage/Hector_admin/pgpass
             mkdir -p /var/lib/pgadmin/storage/admin_example.com
             cp /tmp/.pgpass /var/lib/pgadmin/storage/admin_example.com/pgpass
             chown 5050:5050 /var/lib/pgadmin/storage/admin_example.com/pgpass
