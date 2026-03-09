@@ -21,7 +21,7 @@ spec:
     
     extraSecretMounts:
       - name: pgpassfile
-        secret: pgadmin-db-admin-credentials
+        secret: pgadmin-db-credentials
         subPath: pgpass
         mountPath: "/var/lib/pgadmin/storage/pgadmin/pg-main.pgpass"
         readOnly: true
