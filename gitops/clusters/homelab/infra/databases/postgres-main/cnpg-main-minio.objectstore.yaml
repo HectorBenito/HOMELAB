@@ -5,7 +5,7 @@ metadata:
   namespace: postgres
 spec:
   configuration:
-    destinationPath: s3://cnpg-backups/pg-main/
+    destinationPath: s3://cnpg-backups/
     endpointURL: http://minio.minio.svc.cluster.local:9000
     s3Credentials:
       accessKeyId:
@@ -19,4 +19,5 @@ spec:
       maxParallel: 8
     data:
       compression: gzip
-  retentionPolicy: "30d"
+      jobs: 2
+  retentionPolicy: "60d"
