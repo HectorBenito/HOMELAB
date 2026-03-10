@@ -5,4 +5,4 @@ metadata:
   namespace: minio
 spec:
   interval: 1h
-  url: https://charts.bitnami.com/bitnami
+  url: https://charts.min.io/
