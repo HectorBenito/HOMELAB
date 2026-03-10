@@ -8,3 +8,4 @@ resources:
   - ingress.yaml
   - pvc-media.yaml
   - authentik-db-credentials.secret.sops.yaml
+  - authentik-ldap-tls.yaml
