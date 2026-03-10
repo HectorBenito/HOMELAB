@@ -4,6 +4,7 @@ resources:
   - namespace.yaml
   - cnpg-s3.secret.sops.yaml
   - cnpg-cluster.yaml
+  - cnpg-main-minio.objectstore.yaml
   - cnpg-scheduledbackup.yaml
   - pgadmin-db-credentials.secret.sops.yaml
   - authentik-db-credentials.secret.sops.yaml

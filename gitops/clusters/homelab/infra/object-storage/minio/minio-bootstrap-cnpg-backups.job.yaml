@@ -38,7 +38,6 @@ spec:
               set -euo pipefail
 
               echo "[*] Waiting for MinIO service to be ready..."
-              # Espera hasta 3 minutos a que MinIO acepte credenciales (alias set)
               for i in $(seq 1 36); do
                 if mc alias set local http://minio.minio.svc.cluster.local:9000 "${MINIO_ROOT_USER}" "${MINIO_ROOT_PASSWORD}" >/dev/null 2>&1; then
                   echo "[OK] MinIO reachable and credentials accepted"
@@ -48,7 +47,6 @@ spec:
                 sleep 5
               done
 
-              # Si después del bucle no funciona, fallamos explícito (para logs claros)
               mc alias set local http://minio.minio.svc.cluster.local:9000 "${MINIO_ROOT_USER}" "${MINIO_ROOT_PASSWORD}"
 
               echo "[*] Creating bucket (idempotent)"
