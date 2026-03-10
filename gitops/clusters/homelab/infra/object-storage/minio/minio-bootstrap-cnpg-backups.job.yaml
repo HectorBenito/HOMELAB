@@ -59,13 +59,11 @@ spec:
                 "Statement": [
                   {
                     "Effect": "Allow",
-                    "Action": ["s3:ListBucket"],
-                    "Resource": ["arn:aws:s3:::cnpg-backups"],
-                    "Condition": {
-                      "StringLike": {
-                        "s3:prefix": ["pg-main/*"]
-                      }
-                    }
+                    "Action": [
+                      "s3:GetBucketLocation",
+                      "s3:ListBucket"
+                    ],
+                    "Resource": ["arn:aws:s3:::cnpg-backups"]
                   },
                   {
                     "Effect": "Allow",
@@ -76,7 +74,7 @@ spec:
                       "s3:AbortMultipartUpload",
                       "s3:ListMultipartUploadParts"
                     ],
-                    "Resource": ["arn:aws:s3:::cnpg-backups/pg-main/*"]
+                    "Resource": ["arn:aws:s3:::cnpg-backups/*"]
                   }
                 ]
               }
