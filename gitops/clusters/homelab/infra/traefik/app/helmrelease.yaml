@@ -42,6 +42,12 @@ spec:
           default: true
         exposedPort: 443
         protocol: TCP
+      ldaps:
+        port: 636
+        expose:
+          default: true
+        exposedPort: 636
+        protocol: TCP
       traefik:
         port: 9000
         expose:
