@@ -61,7 +61,7 @@ data:
     omada       IN A 192.168.110.242
     pgadmin     IN A 192.168.110.242
     minio       IN A 192.168.110.242
-    ldap        IN A 192.168.110.240
+    ldap        IN A 192.168.110.242
 
     ; Wildcard para servicios internos
     *          IN A 192.168.110.242
