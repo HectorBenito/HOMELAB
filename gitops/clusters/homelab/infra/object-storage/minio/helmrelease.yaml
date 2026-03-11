@@ -17,8 +17,7 @@ spec:
   values:
     mode: standalone
 
-    auth:
-      existingSecret: minio-root
+    existingSecret: minio-root
 
     persistence:
       enabled: true
