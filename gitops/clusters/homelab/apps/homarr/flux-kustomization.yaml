@@ -25,3 +25,4 @@ spec:
     - name: traefik
     - name: cert-issuers
     - name: authentik
+    - name: postgres
