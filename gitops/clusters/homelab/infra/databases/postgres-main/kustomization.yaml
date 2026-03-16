@@ -9,6 +9,8 @@ resources:
   - pgadmin-db-credentials.secret.sops.yaml
   - authentik-db-credentials.secret.sops.yaml
   - authentik-db.yaml
+  - hommar-db.yaml
+  - hommar-db-credentials.secret.sops.yaml
 
 patches:
   - path: postgres-managed-roles-patch.yaml

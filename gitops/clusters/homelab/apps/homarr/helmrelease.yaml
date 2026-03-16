@@ -17,35 +17,30 @@ spec:
       interval: 1h
 
   values:
-    replicaCount: 3
-    # --- Storage (DB) ---
+    replicaCount: 2
+    
+    database:
+      type: postgresql
+      migrationEnabled: true
+
     persistence:
       homarrDatabase:
-        enabled: true
-        storageClassName: longhorn
-        size: 5Gi
+        enabled: false
 
-    # --- Ingress del chart OFF (usamos IngressRoute propio) ---
     ingress:
       enabled: false
 
-    # --- Env: URL pública + OIDC ---
     env:
       TZ: "Europe/Madrid"
 
       BASE_URL: "https://nasbenito.com"
       NEXTAUTH_URL: "https://nasbenito.com"
 
-      # OIDC only (recomendado para evitar confusiones)
       AUTH_PROVIDERS: "oidc"
-
-      # Authentik OIDC
       AUTH_OIDC_CLIENT_NAME: "authentik"
-      AUTH_OIDC_ISSUER: "https://auth.nasbenito.com/application/o/homarr/"  # OIDC_SLUG=homarr (trailing slash importante para Authentik)
+      AUTH_OIDC_ISSUER: "https://auth.nasbenito.com/application/o/homarr/"
       AUTH_OIDC_URI: "https://auth.nasbenito.com/application/o/authorize"
       AUTH_OIDC_SCOPE_OVERWRITE: "openid email profile"
       AUTH_OIDC_GROUPS_ATTRIBUTE: "groups"
-
-      # opcional: mejora UX
       AUTH_OIDC_AUTO_LOGIN: "true"
       AUTH_LOGOUT_REDIRECT_URL: "https://auth.nasbenito.com/application/o/homarr/end-session/"

@@ -25,3 +25,13 @@ spec:
         inherit: true
         passwordSecret:
           name: authentik-db-credentials
+
+      - name: homarr
+        ensure: present
+        login: true
+        superuser: false
+        createdb: true
+        createrole: false
+        inherit: true
+        passwordSecret:
+          name: homarr-db-credentials
