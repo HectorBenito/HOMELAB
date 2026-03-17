@@ -41,3 +41,4 @@ spec:
       AUTH_OIDC_URI: "https://auth.nasbenito.com/application/o/authorize"
       AUTH_OIDC_AUTO_LOGIN: "false"
       AUTH_LOGOUT_REDIRECT_URL: "https://auth.nasbenito.com/application/o/homarr/end-session/"
+      
