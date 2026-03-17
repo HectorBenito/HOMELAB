@@ -21,7 +21,7 @@ resources:
   - ./infra/databases/reflector/flux-kustomization.yaml
   - ./infra/databases/barman-cloud-plugin/flux-kustomization.yaml
   - ./infra/observability/metrics-server/flux-kustomization.yaml
-  #- ./infra/jetkvm-cloud/flux-kustomization.yaml
+  - ./infra/jetkvm/flux-kustomization.yaml
   - ./security/cert-manager-issuers/flux-kustomization.yaml
   - ./security/cloudflare/flux-kustomization.yaml
   - ./security/cloudflare-tunnel/flux-kustomization.yaml

@@ -1,0 +1,10 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: pg-main-jetkvm
+  namespace: postgres
+spec:
+  name: jetkvm
+  owner: jetkvm
+  cluster:
+    name: pg-main
