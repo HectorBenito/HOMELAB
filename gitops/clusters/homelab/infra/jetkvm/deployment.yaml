@@ -16,7 +16,7 @@ spec:
     spec:
       initContainers:
         - name: migrate
-          image: ghcr.io/nasbenito/jetkvm-cloud-api:latest
+          image: ghcr.io/timothystewart6/cloud-api:0.0.3
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
@@ -28,7 +28,7 @@ spec:
 
       containers:
         - name: jetkvm-cloud
-          image: ghcr.io/nasbenito/jetkvm-cloud-api:latest
+          image: ghcr.io/timothystewart6/cloud-api:0.0.3
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
