@@ -16,7 +16,7 @@ resources:
   - ./infra/omada/flux-kustomization.yaml
   - ./infra/object-storage/minio/flux-kustomization.yaml
   - ./infra/databases/cloudnative-pg/flux-kustomization.yaml
-  - ./infra/databases/postgres-main/flux-kustomization.yaml
+  # - ./infra/databases/postgres-main/flux-kustomization.yaml
   - ./infra/databases/pgadmin/flux-kustomization.yaml
   - ./infra/databases/reflector/flux-kustomization.yaml
   - ./infra/databases/barman-cloud-plugin/flux-kustomization.yaml
