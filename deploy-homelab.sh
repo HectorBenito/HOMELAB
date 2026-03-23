@@ -6,7 +6,7 @@
 # This script orchestrates the 3-layer deployment:
 # - Layer 1: Infrastructure (Terraform - VMs)
 # - Layer 2: Configuration (Ansible - Talos Kubernetes)
-# - Layer 3: GitOps (ArgoCD + Applications)
+# - Layer 3: GitOps (FluxCD + Applications)
 #
 # Usage: ./deploy-homelab.sh [--skip-layer1] [--skip-layer2] [--skip-layer3] [--destroy-homelab] [--help]
 ################################################################################
@@ -81,7 +81,7 @@ Options:
 Layers:
   Layer 1: Infrastructure (Terraform - Talos VMs)
   Layer 2: Configuration (Ansible - Talos Kubernetes)
-  Layer 3: GitOps (ArgoCD + Applications)
+  Layer 3: GitOps (FluxCD + Applications)
 
   NFS: Uses external TrueNas server at 192.168.100.11 (not managed by this script)
 
@@ -375,7 +375,7 @@ layer3_gitops() {
         return 0
     fi
 
-    log_layer "Starting Layer 3: GitOps (ArgoCD + Applications)"
+    log_layer "Starting Layer 3: GitOps (FluxCD + Applications)"
 
     cd "${ANSIBLE_DIR}"
 
@@ -387,9 +387,7 @@ layer3_gitops() {
 
     log "✅ Layer 3 Complete: GitOps applications deployed"
     echo ""
-    echo "ArgoCD Access:"
-    echo "  kubectl port-forward svc/argocd-server -n argocd 8080:443"
-    echo "  Admin password: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d"
+    echo "  - FluxCD bootstrapped in cluster"
 }
 
 # Main deployment function
@@ -428,8 +426,6 @@ EOF
     echo ""
     echo "Next steps:"
     echo "  1. Export kubeconfig: export KUBECONFIG=${KUBECONFIG_PATH}"
-    echo "  2. Access ArgoCD: kubectl port-forward svc/argocd-server -n argocd 8080:443"
-    echo "  3. Monitor applications: kubectl get applications -n argocd --watch"
 }
 
 # Execute main function
