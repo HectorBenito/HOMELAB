@@ -33,14 +33,14 @@
 
 - name: Ensure flux-system namespace exists
   ansible.builtin.command:
-    cmd: kubectl get ns flux-system
+    cmd: kubectl --kubeconfig {{ kubeconfig_path }} get ns flux-system
   changed_when: false
 
 - name: Create/Update SOPS age secret in flux-system
   ansible.builtin.shell: |
-    kubectl -n flux-system create secret generic sops-age \
+    kubectl --kubeconfig {{ kubeconfig_path }} -n flux-system create secret generic sops-age \
       --from-file=age.agekey={{ talos_config_dir }}/secrets/sops/age.agekey \
-      --dry-run=client -o yaml | kubectl apply -f -
+      --dry-run=client -o yaml | kubectl apply -f - --kubeconfig {{ kubeconfig_path }}
   args:
     executable: /bin/bash
   changed_when: true

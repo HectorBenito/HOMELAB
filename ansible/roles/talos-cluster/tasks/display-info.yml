@@ -38,8 +38,3 @@
 
       System Pods Status:
       {{ pods_info.stdout }}
-
-      Next Steps:
-        1. Export kubeconfig: export KUBECONFIG={{ talos_config_dir }}/rendered/kubeconfig
-        2. Install ArgoCD
-        3. Deploy GitOps applications
