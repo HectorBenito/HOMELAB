@@ -31,7 +31,7 @@ resource "proxmox_vm_qemu" "talos_stateless_worker" {
     content {
       id      = network.value.id
       model   = "virtio"
-      bridge  = "vmbr0"
+      bridge  = network.value.bridge
       macaddr = network.value.macaddr
     }
   }

@@ -15,6 +15,12 @@ talos_control_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D1"
+        bridge  = "vmbr0"
+      },
+      {
+        id      = 1
+        bridge  = "tb4net"
+        macaddr = "BC:24:13:5F:39:D1"
       }
     ]
   },
@@ -30,6 +36,12 @@ talos_control_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D2"
+        bridge  = "vmbr0"
+      },
+      {
+        id      = 1
+        bridge  = "tb4net"
+        macaddr = "BC:24:13:5F:39:D2"
       }
     ]
   },
@@ -44,6 +56,12 @@ talos_control_configuration = [
     networks = [
       {
         id      = 0
+        macaddr = "BC:24:13:5F:39:D3"
+        bridge  = "vmbr0"
+      },
+      {
+        id      = 1
+        bridge  = "tb4net"
         macaddr = "BC:24:13:5F:39:D3"
       }
     ]
@@ -67,6 +85,12 @@ talos_worker_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D4"
+        bridge  = "vmbr0"
+      },
+      {
+        id      = 1
+        bridge  = "tb4net"
+        macaddr = "BC:24:13:5F:39:D4"
       }
     ]
   },
@@ -84,6 +108,12 @@ talos_worker_configuration = [
       {
         id      = 0
         macaddr = "BC:24:13:5F:39:D5"
+        bridge  = "vmbr0"
+      },
+      {
+        id      = 1
+        bridge  = "tb4net"
+        macaddr = "BC:24:13:5F:39:D5"
       }
     ]
   },
@@ -100,6 +130,12 @@ talos_worker_configuration = [
     networks = [
       {
         id      = 0
+        macaddr = "BC:24:13:5F:39:D6"
+        bridge  = "vmbr0"
+      },
+      {
+        id      = 1
+        bridge  = "tb4net"
         macaddr = "BC:24:13:5F:39:D6"
       }
     ]

@@ -44,6 +44,7 @@ variable talos_control_configuration {
         {
           id      = number
           macaddr = string
+          bridge  = string
         }
       ))
     }
@@ -68,6 +69,7 @@ variable talos_worker_configuration {
         {
           id      = number
           macaddr = string
+          bridge  = string
         }
       ))
     }
