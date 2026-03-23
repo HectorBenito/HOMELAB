@@ -13,7 +13,7 @@ spec:
 
   resources:
     requests:
-      cpu: "1"
+      cpu: "2"
       memory: 4Gi
     limits:
       cpu: "4"
@@ -42,4 +42,16 @@ spec:
     isWALArchiver: true
     parameters:
       barmanObjectName: pg-main-minio
+  
+  bootstrap:
+    recovery:
+      source: pg-main
+
+  externalClusters:
+    - name: pg-main
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: pg-main-minio
+          serverName: pg-main
 
