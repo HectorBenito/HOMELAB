@@ -47,6 +47,7 @@ spec:
     environment:
       MINIO_BROWSER_REDIRECT_URL: "https://minio.local.nasbenito.com"
       MINIO_IDENTITY_OPENID_CLAIM_USERINFO: "on"
+      MINIO_IDENTITY_OPENID_ROLE_POLICY: "consoleAdmin"
 
     oidc:
       enabled: true
@@ -54,7 +55,6 @@ spec:
       existingClientSecretName: "minio-oidc"
       existingClientIdKey: "client_id"
       existingClientSecretKey: "client_secret"
-      claimName: "policy"
       scopes: "openid,profile,email"
       redirectUri: "https://minio.local.nasbenito.com/oauth_callback"
       displayName: "Log in with Authentik"
