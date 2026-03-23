@@ -9,3 +9,4 @@ resources:
   - ingressroute-console.yaml
   - minio-bootstrap-cnpg-backups.job.yaml
   - minio-oidc.secret.sops.yaml
+  - minio-nfs-backup.yaml

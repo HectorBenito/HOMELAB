@@ -20,4 +20,4 @@ spec:
     data:
       compression: gzip
       jobs: 2
-  retentionPolicy: "60d"
+  retentionPolicy: "30d"

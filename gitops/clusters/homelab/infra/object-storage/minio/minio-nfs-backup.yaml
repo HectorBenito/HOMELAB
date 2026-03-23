@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-minio-backups
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.100.11
+    path: /mnt/HOMELAB/MinIO
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-minio-backups
+  namespace: minio
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Ti
+  volumeName: nfs-minio-backups
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: minio-to-nfs-backup
+  namespace: minio
+spec:
+  schedule: "0 4 * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: mc
+              image: minio/mc:latest
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -eu
+
+                  echo "Configurando alias MinIO..."
+                  mc alias set local http://minio.minio.svc.cluster.local:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
+
+                  echo "Preparando directorio espejo..."
+                  mkdir -p /backup/latest
+
+                  echo "Sincronizando MinIO -> NFS..."
+                  mc mirror --overwrite --remove local /backup/latest
+
+                  echo "Sincronización completada."
+              env:
+                - name: MINIO_ROOT_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: minio-root
+                      key: rootUser
+                - name: MINIO_ROOT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: minio-root
+                      key: rootPassword
+              volumeMounts:
+                - name: backup
+                  mountPath: /backup
+          volumes:
+            - name: backup
+              persistentVolumeClaim:
+                claimName: nfs-minio-backups
