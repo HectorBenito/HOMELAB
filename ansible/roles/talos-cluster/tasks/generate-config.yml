@@ -143,6 +143,10 @@
               dhcp: true
               vip:
                 ip: {{ cluster_vip_ip }}
+            - interface: ens19
+              dhcp: false
+              addresses:
+                - {{ item.ip_tb4 }}/24
         install:
           disk: {{ item.install_disk | default(default_install_disk) }}
       {% if item.longhorn_disk is defined %}
@@ -164,6 +168,10 @@
           interfaces:
             - interface: ens18
               dhcp: true
+            - interface: ens19
+              dhcp: false
+              addresses:
+                - {{ item.ip_tb4 }}/24
         install:
           disk: {{ item.install_disk | default(default_install_disk) }}
       {% if item.longhorn_disk is defined %}

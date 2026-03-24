@@ -19,25 +19,31 @@ talos_nodes:
   control_planes:
     - hostname: "talos-control-1"
       ip: "192.168.110.18"
+      ip_tb4: "10.30.0.18"
       vmid: 1110
     - hostname: "talos-control-2"
       ip: "192.168.110.20"
+      ip_tb4: "10.30.0.20"
       vmid: 2110
     - hostname: "talos-control-3"
       ip: "192.168.110.22"
+      ip_tb4: "10.30.0.22"
       vmid: 3110
   # VM workers
   workers:
     - hostname: "talos-worker-1"
       ip: "192.168.110.19"
+      ip_tb4: "10.30.0.19"
       vmid: 1111
       longhorn_disk: "/dev/sdb" 
     - hostname: "talos-worker-2"
       ip: "192.168.110.21"
+      ip_tb4: "10.30.0.21"
       vmid: 2111
       longhorn_disk: "/dev/sdb" 
     - hostname: "talos-worker-3"
       ip: "192.168.110.23"
+      ip_tb4: "10.30.0.23"
       vmid: 3111
       longhorn_disk: "/dev/sdb"
 
