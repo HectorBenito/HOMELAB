@@ -20,6 +20,7 @@ spec:
     defaultSettings:
       defaultDataPath: /var/mnt/longhorn
       defaultReplicaCount: 2
+      storageNetwork: "10.30.0.0/24"
       storageOverProvisioningPercentage: 100
       storageReservedPercentageForDefaultDisk: 5
       storageMinimalAvailablePercentage: 5
