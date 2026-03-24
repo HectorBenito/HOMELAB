@@ -90,6 +90,17 @@
     dest: "{{ talos_config_dir }}/system-extensions.yaml"
     mode: '0644'
 
+- name: Create kubelet NodeIp subnet patch
+  ansible.builtin.copy:
+    content: |
+      machine:
+        kubelet:
+          nodeIP:
+            validSubnets:
+              - 192.168.110.0/24
+    dest: "{{ talos_config_dir }}/kubelet-nodeip-patch.yaml"
+    mode: '0644'
+
 - name: Create machine features and Longhorn support patch
   ansible.builtin.copy:
     content: |
@@ -203,6 +214,7 @@
       --config-patch @kubelet-certs.yaml
       --config-patch @kubelet-cert-approver.yaml
       --config-patch @system-extensions.yaml
+      --config-patch @kubelet-nodeip-patch.yaml
       --config-patch @machine-features.yaml
       --config-patch-control-plane @oidc.yaml
       --config-patch-control-plane @{{ item.item.hostname }}-machine.yaml
@@ -232,6 +244,7 @@
       --config-patch @kubelet-certs.yaml
       --config-patch @kubelet-cert-approver.yaml
       --config-patch @system-extensions.yaml
+      --config-patch @kubelet-nodeip-patch.yaml
       --config-patch @machine-features.yaml
       --config-patch-control-plane @oidc.yaml
       --config-patch-worker @{{ item.item.hostname }}-machine.yaml
