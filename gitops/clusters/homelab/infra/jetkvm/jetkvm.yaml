@@ -1,0 +1,91 @@
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: jetkvm-transport
+  namespace: traefik
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: truenas-jetkvm-svc
+  namespace: traefik
+subsets:
+  - addresses:
+      - ip: 192.168.111.10
+    ports:
+      - port: 443
+        name: https
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: pve1-jetkvm-svc
+  namespace: traefik
+subsets:
+  - addresses:
+      - ip: 192.168.111.11
+    ports:
+      - port: 443
+        name: https
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: pve2-jetkvm-svc
+  namespace: traefik
+subsets:
+  - addresses:
+      - ip: 192.168.111.12
+    ports:
+      - port: 443
+        name: https
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: pve3-jetkvm-svc
+  namespace: traefik
+subsets:
+  - addresses:
+      - ip: 192.168.111.13
+    ports:
+      - port: 443
+        name: https
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jetkvm-lan-route
+  namespace: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`truenas-kvm.local.nasbenito.com`)
+    kind: Rule
+    services:
+    - name: truenas-jetkvm-svc
+      port: 443
+      serversTransport: jetkvm-transport
+  - match: Host(`pve1-kvm.local.nasbenito.com`)
+    kind: Rule
+    services:
+    - name: pve1-jetkvm-svc
+      port: 443
+      serversTransport: jetkvm-transport
+  - match: Host(`pve2-kvm.local.nasbenito.com`)
+    kind: Rule
+    services:
+    - name: pve2-jetkvm-svc
+      port: 443
+      serversTransport: jetkvm-transport
+  - match: Host(`pve3-kvm.local.nasbenito.com`)
+    kind: Rule
+    services:
+    - name: pve3-jetkvm-svc
+      port: 443
+      serversTransport: jetkvm-transport
+  tls:
+    secretName: wildcard-local-nasbenito-com-tls
