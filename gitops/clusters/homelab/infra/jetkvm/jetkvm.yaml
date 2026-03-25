@@ -127,7 +127,7 @@ spec:
     - match: Host(`truenas-kvm.local.nasbenito.com`)
       kind: Rule
       middlewares:
-        - name: ak-outpost-truenas-kvm-proxy-outpost
+        - name: ak-outpost-jetkvm-proxy-outpost
           namespace: authentik
       services:
         - kind: Service
@@ -139,6 +139,9 @@ spec:
 
     - match: Host(`pve1-kvm.local.nasbenito.com`)
       kind: Rule
+      middlewares:
+        - name: ak-outpost-jetkvm-proxy-outpost
+          namespace: authentik
       services:
         - kind: Service
           name: pve1-jetkvm-svc
@@ -149,6 +152,9 @@ spec:
 
     - match: Host(`pve2-kvm.local.nasbenito.com`)
       kind: Rule
+      middlewares:
+        - name: ak-outpost-jetkvm-proxy-outpost
+          namespace: authentik
       services:
         - kind: Service
           name: pve2-jetkvm-svc
@@ -159,6 +165,9 @@ spec:
 
     - match: Host(`pve3-kvm.local.nasbenito.com`)
       kind: Rule
+      middlewares:
+        - name: ak-outpost-jetkvm-proxy-outpost
+          namespace: authentik
       services:
         - kind: Service
           name: pve3-jetkvm-svc
