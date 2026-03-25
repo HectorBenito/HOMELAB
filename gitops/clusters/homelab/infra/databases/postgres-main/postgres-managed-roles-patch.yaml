@@ -35,13 +35,3 @@ spec:
         inherit: true
         passwordSecret:
           name: homarr-db-credentials
-
-      - name: jetkvm
-        ensure: present
-        login: true
-        superuser: false
-        createdb: true
-        createrole: false
-        inherit: true
-        passwordSecret:
-          name: jetkvm-db-credentials
