@@ -11,8 +11,6 @@ resources:
   - authentik-db.yaml
   - homarr-db.yaml
   - homarr-db-credentials.secret.sops.yaml
-  - jetkvm-db.yaml
-  - jetkvm-db-credentials.secret.sops.yaml
 
 patches:
   - path: postgres-managed-roles-patch.yaml
