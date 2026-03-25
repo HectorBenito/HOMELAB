@@ -128,7 +128,7 @@ spec:
       kind: Rule
       middlewares:
         - name: ak-outpost-truenas-kvm-proxy-outpost
-          namespace: traefik
+          namespace: authentik
       services:
         - kind: Service
           name: truenas-jetkvm-svc
