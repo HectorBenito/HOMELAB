@@ -126,6 +126,9 @@ spec:
   routes:
     - match: Host(`truenas-kvm.local.nasbenito.com`)
       kind: Rule
+      middlewares:
+        - name: ak-outpost-truenas-kvm-proxy-outpost
+          namespace: traefik
       services:
         - kind: Service
           name: truenas-jetkvm-svc
